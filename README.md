@@ -1,9 +1,9 @@
 # SMART SHOPINT
 
-Mobile-first supermarket shopping simulation: a single-page web app where a
-user registers, picks a supermarket, scans (or simulates scanning) product QR
-codes, fills a cart, and completes a simulated checkout that produces a
-printable receipt stored in purchase history.
+Mobile-first shopping simulation: a single-page web app where a user
+registers, picks a shopping mall and then a store inside it, scans (or
+simulates scanning) product QR codes, fills a cart, and completes a simulated
+checkout that produces a printable receipt stored in purchase history.
 
 Everything runs in the browser. There is no backend, no database, and no real
 payment provider. Mock data lives in `localStorage`.
@@ -40,7 +40,7 @@ payment provider. Mock data lives in `localStorage`.
 src/
   app/         store.ts + AppStore.tsx (Context + reducer), guards.tsx, routes.tsx
   data/        types.ts (mock domain model), catalog.ts (mock seed)
-  features/    auth/ (register/login), supermarket/ (picker), catalog/ (placeholder)
+  features/    auth/ (register/login), malls/ (level 1 picker), stores/ (level 2 picker), catalog/ (placeholder)
   lib/         storage.ts (typed localStorage wrapper), auth.ts (simulated auth)
   styles/      index.css
   test/        setup.ts (Vitest setup), renderApp.tsx (route test helper)

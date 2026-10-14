@@ -14,10 +14,28 @@ export type Currency = 'PEN'
 /** Simulated checkout payment method. Never charged over the network. */
 export type PaymentMethod = 'yape' | 'plin' | 'cash'
 
-/** A supermarket the user can shop in. */
-export interface Supermarket {
+/** A shopping mall (level 1 of the selection flow). */
+export interface Mall {
   id: string
   name: string
+  /** District the mall is located in. */
+  district: string
+}
+
+/** The kind of store, used for the category label shown to the user. */
+export type StoreCategory =
+  | 'supermercado'
+  | 'hipermercado'
+  | 'mayorista'
+  | 'tienda por departamento'
+  | 'home center'
+
+/** A store inside a mall (level 2 of the selection flow). */
+export interface Store {
+  id: string
+  mallId: string
+  name: string
+  category: StoreCategory
 }
 
 /** A catalog grouping used to render products section by section. */
@@ -29,14 +47,14 @@ export interface Category {
 /**
  * A single priced product row.
  *
- * A product is keyed by the (`sku`, `supermarketId`) pair, so the same `sku`
- * can be sold by several supermarkets at different prices.
+ * A product is keyed by the (`sku`, `storeId`) pair, so the same `sku` can be
+ * sold by several stores at different prices.
  */
 export interface Product {
   sku: Sku
   name: string
   categoryId: string
-  supermarketId: string
+  storeId: string
   price: number
   currency: Currency
   /** ISO date (YYYY-MM-DD) on which the product expires. */
@@ -46,7 +64,7 @@ export interface Product {
 /** One line of the shopping cart. Unit price is captured when added. */
 export interface CartLine {
   sku: Sku
-  supermarketId: string
+  storeId: string
   qty: number
   unitPrice: number
 }

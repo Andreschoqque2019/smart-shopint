@@ -1,13 +1,20 @@
 /**
  * The only module allowed to touch `localStorage`.
  *
- * Every value is stored as JSON under a versioned key (`shopint:v1:*`) so the
+ * Every value is stored as JSON under a versioned key (`shopint:v2:*`) so the
  * app can migrate or reset demo data deterministically. Reads are defensive:
  * a missing key, corrupt JSON, a failed guard, or an unavailable storage all
  * fall back to the caller's default instead of throwing.
  */
 
-export const STORAGE_NAMESPACE = 'shopint:v1'
+/**
+ * Storage namespace.
+ *
+ * Bumped from `v1` to `v2` when the selection flow changed from a single
+ * supermarket to a mall + store pair. Old `shopint:v1:*` data is left in place
+ * but never read, so stale selections are invalidated instead of migrated.
+ */
+export const STORAGE_NAMESPACE = 'shopint:v2'
 
 const KEY_PREFIX = `${STORAGE_NAMESPACE}:`
 
@@ -16,7 +23,8 @@ export const StorageKeys = {
   auth: `${KEY_PREFIX}auth`,
   cart: `${KEY_PREFIX}cart`,
   orders: `${KEY_PREFIX}orders`,
-  supermarket: `${KEY_PREFIX}supermarket`,
+  mall: `${KEY_PREFIX}mall`,
+  store: `${KEY_PREFIX}store`,
 } as const
 
 export type StorageKey = (typeof StorageKeys)[keyof typeof StorageKeys]
@@ -109,7 +117,7 @@ export function removeJSON(key: string): void {
 }
 
 /**
- * Removes every `shopint:v1:*` entry and leaves unrelated keys untouched.
+ * Removes every `shopint:v2:*` entry and leaves unrelated keys untouched.
  * Backs the "reset demo data" control. Never throws.
  */
 export function clearNamespace(): void {

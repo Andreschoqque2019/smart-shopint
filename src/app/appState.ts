@@ -1,4 +1,4 @@
-import type { Supermarket, User } from '../data/types'
+import type { Mall, Store, User } from '../data/types'
 import {
   authenticate,
   type AuthError,
@@ -14,57 +14,71 @@ import { readJSON, removeJSON, StorageKeys, writeJSON } from '../lib/storage'
  *
  * The state is hydrated from `localStorage` on boot and written back whenever
  * it changes (see `AppStore.tsx`). It holds only the slices owned by the
- * current delivery slice: the account list, the active session, the selected
- * supermarket, and the last auth error shown to the user.
+ * current delivery slice: the account list, the active session, the mall and
+ * store selection, and the last auth error shown to the user.
  */
 export interface AppState {
   accounts: User[]
   currentUser: User | null
-  selectedSupermarket: Supermarket | null
+  selectedMall: Mall | null
+  selectedStore: Store | null
   authError: AuthError | null
 }
 
-/** Every mutation the app can perform on `AppState`. */
+/** Every mutation the app can perform. */
 export type AppAction =
   | { type: 'auth/register'; name: string; email: string; password: string }
   | { type: 'auth/login'; email: string; password: string }
   | { type: 'auth/logout' }
   | { type: 'auth/clear-error' }
-  | { type: 'supermarket/select'; supermarket: Supermarket }
+  | { type: 'mall/select'; mall: Mall }
+  | { type: 'store/select'; store: Store }
 
-/** Storage guard for the persisted supermarket selection. */
-export function isSupermarket(value: unknown): value is Supermarket {
+/** Storage guard for the persisted mall selection. */
+export function isMall(value: unknown): value is Mall {
   if (typeof value !== 'object' || value === null) {
     return false
   }
   const candidate = value as Record<string, unknown>
   return (
-    typeof candidate.id === 'string' && typeof candidate.name === 'string'
+    typeof candidate.id === 'string' &&
+    typeof candidate.name === 'string' &&
+    typeof candidate.district === 'string'
   )
 }
 
-/** Builds the initial state by defensively reading `localStorage`. */
-export function loadInitialState(): AppState {
-  const auth: AuthRecord = readAuthRecord()
-  const selectedSupermarket = readJSON<Supermarket | null>(
-    StorageKeys.supermarket,
-    null,
-    isSupermarket,
+/** Storage guard for the persisted store selection. */
+export function isStore(value: unknown): value is Store {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const candidate = value as Record<string, unknown>
+  return (
+    typeof candidate.id === 'string' &&
+    typeof candidate.mallId === 'string' &&
+    typeof candidate.name === 'string' &&
+    typeof candidate.category === 'string'
   )
+}
 
+/** Reads the persisted app state, falling back to empty slices. */
+export function loadInitialState(): AppState {
+  const auth = readAuthRecord()
   return {
     accounts: auth.accounts,
     currentUser: auth.currentUser,
-    selectedSupermarket,
+    selectedMall: readJSON<Mall | null>(StorageKeys.mall, null, isMall),
+    selectedStore: readJSON<Store | null>(StorageKeys.store, null, isStore),
     authError: null,
   }
 }
 
 /**
- * The single reducer for the app store.
+ * App reducer.
  *
- * Pure: it never touches React or `localStorage`, so auth and supermarket rules
- * can be unit-tested in isolation.
+ * Pure and exhaustive over {@link AppAction}: it never touches `localStorage`.
+ * Selecting a mall always clears the previously selected store, because a store
+ * only makes sense inside the mall that contains it.
  */
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
@@ -99,15 +113,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         currentUser: null,
-        selectedSupermarket: null,
+        selectedMall: null,
+        selectedStore: null,
         authError: null,
       }
 
     case 'auth/clear-error':
       return state.authError === null ? state : { ...state, authError: null }
 
-    case 'supermarket/select':
-      return { ...state, selectedSupermarket: action.supermarket }
+    case 'mall/select':
+      return { ...state, selectedMall: action.mall, selectedStore: null }
+
+    case 'store/select':
+      return { ...state, selectedStore: action.store }
 
     default:
       return state
@@ -123,11 +141,20 @@ export function persistAuth(state: AppState): void {
   writeAuthRecord(auth)
 }
 
-/** Persists or clears the supermarket selection. */
-export function persistSupermarket(state: AppState): void {
-  if (state.selectedSupermarket) {
-    writeJSON(StorageKeys.supermarket, state.selectedSupermarket)
+/** Persists or clears the mall selection. */
+export function persistMall(state: AppState): void {
+  if (state.selectedMall) {
+    writeJSON(StorageKeys.mall, state.selectedMall)
   } else {
-    removeJSON(StorageKeys.supermarket)
+    removeJSON(StorageKeys.mall)
+  }
+}
+
+/** Persists or clears the store selection. */
+export function persistStore(state: AppState): void {
+  if (state.selectedStore) {
+    writeJSON(StorageKeys.store, state.selectedStore)
+  } else {
+    removeJSON(StorageKeys.store)
   }
 }

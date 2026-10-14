@@ -9,7 +9,8 @@ import { AppRoutes } from '../app/routes'
  * Renders the real route table inside a memory router.
  *
  * Uses the production guards and store so tests exercise the gate, the auth
- * flow and the supermarket selection exactly as the app wires them.
+ * Uses the production guards and store so tests exercise the gate, the auth
+ * flow and the mall + store selection exactly as the app wires them.
  */
 export function renderApp(
   initialEntries: string[] = ['/'],

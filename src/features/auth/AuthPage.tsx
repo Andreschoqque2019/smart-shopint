@@ -19,7 +19,7 @@ const AUTH_ERROR_MESSAGES: Record<AuthError, string> = {
  *
  * This is a simulated gate: credentials are checked against the accounts kept
  * in `localStorage`. On success the reducer sets `currentUser` and the user is
- * redirected to the supermarket picker.
+ * redirected to the mall picker.
  */
 export function AuthPage() {
   const { state, dispatch } = useAppStore()

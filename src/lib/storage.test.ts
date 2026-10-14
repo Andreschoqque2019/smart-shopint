@@ -19,13 +19,25 @@ describe('storage keys', () => {
       expect(key.startsWith(`${STORAGE_NAMESPACE}:`)).toBe(true)
     }
   })
+
+  it('uses the bumped namespace so old selections are invalidated', () => {
+    expect(STORAGE_NAMESPACE).toBe('shopint:v2')
+
+    window.localStorage.setItem(
+      'shopint:v1:supermarket',
+      JSON.stringify({ id: 'sm-makro' }),
+    )
+
+    expect(readJSON(StorageKeys.store, null, () => true)).toBeNull()
+    expect(readJSON(StorageKeys.mall, null, () => true)).toBeNull()
+  })
 })
 
 describe('writeJSON', () => {
   it('serializes a value as JSON under the given key', () => {
     const line = {
       sku: 'SKU-1001',
-      supermarketId: 'sm-mall-del-sur',
+      storeId: 'md-tottus',
       qty: 2,
       unitPrice: 7.9,
     }
@@ -40,25 +52,27 @@ describe('writeJSON', () => {
 
 describe('readJSON', () => {
   it('round-trips a written value', () => {
-    const supermarket = { id: 'sm-mall-del-sur', name: 'Mall del Sur' }
+    const mall = {
+      id: 'mall-del-sur',
+      name: 'Mall del Sur',
+      district: 'San Juan de Miraflores',
+    }
 
-    writeJSON(StorageKeys.supermarket, supermarket)
+    writeJSON(StorageKeys.mall, mall)
 
     const restored = readJSON(
-      StorageKeys.supermarket,
+      StorageKeys.mall,
       null,
-      (value): value is typeof supermarket =>
+      (value): value is typeof mall =>
         typeof value === 'object' && value !== null && 'id' in value,
     )
 
-    expect(restored).toEqual(supermarket)
+    expect(restored).toEqual(mall)
   })
 
   it('falls back when the key is absent', () => {
-    const fallback = { id: 'sm-plaza-vea' }
-    expect(readJSON(StorageKeys.supermarket, fallback, () => true)).toBe(
-      fallback,
-    )
+    const fallback = { id: 'jp-plaza-vea' }
+    expect(readJSON(StorageKeys.store, fallback, () => true)).toBe(fallback)
   })
 
   it('falls back when the stored text is corrupt JSON', () => {
@@ -90,11 +104,11 @@ describe('readJSON', () => {
 
 describe('removeJSON', () => {
   it('removes a single entry', () => {
-    writeJSON(StorageKeys.supermarket, { id: 'sm-mall-del-sur' })
+    writeJSON(StorageKeys.store, { id: 'md-tottus' })
 
-    removeJSON(StorageKeys.supermarket)
+    removeJSON(StorageKeys.store)
 
-    expect(window.localStorage.getItem(StorageKeys.supermarket)).toBeNull()
+    expect(window.localStorage.getItem(StorageKeys.store)).toBeNull()
   })
 })
 

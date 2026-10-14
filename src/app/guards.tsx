@@ -18,16 +18,35 @@ export function RequireAuth() {
 }
 
 /**
- * Requires a supermarket selection before catalog browsing.
+ * Requires a mall selection before the store picker.
  *
- * Redirects back to the supermarket picker when a protected route is opened
- * directly without a prior selection.
+ * Redirects back to the mall picker (level 1) when the store list is opened
+ * directly without a prior mall choice.
  */
-export function RequireSupermarket() {
+export function RequireMall() {
   const { state } = useAppStore()
 
-  if (!state.selectedSupermarket) {
+  if (!state.selectedMall) {
     return <Navigate to="/" replace />
+  }
+  return <Outlet />
+}
+
+/**
+ * Requires a store selection before catalog browsing.
+ *
+ * Sends the visitor to the right level of the flow: back to the mall picker
+ * when no mall is set, or to the store picker of the chosen mall when no store
+ * has been selected yet.
+ */
+export function RequireStore() {
+  const { state } = useAppStore()
+
+  if (!state.selectedMall) {
+    return <Navigate to="/" replace />
+  }
+  if (!state.selectedStore) {
+    return <Navigate to="/stores" replace />
   }
   return <Outlet />
 }

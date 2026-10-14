@@ -4,7 +4,8 @@ import {
   appReducer,
   loadInitialState,
   persistAuth,
-  persistSupermarket,
+  persistMall,
+  persistStore,
   type AppState,
 } from './appState'
 import { AppStoreContext } from './store'
@@ -16,16 +17,14 @@ interface AppProviderProps {
 }
 
 /**
- * Provides the app store and keeps `localStorage` in sync with it.
+ * Provides the app store.
  *
- * State is hydrated once from the typed storage wrapper on mount, then written
- * back whenever it changes.
+ * The state is hydrated from `localStorage` once on boot and written back
+ * whenever the auth record or the mall/store selection changes.
  */
 export function AppProvider({ children, initialState }: AppProviderProps) {
-  const [state, dispatch] = useReducer(
-    appReducer,
-    initialState,
-    (seed) => seed ?? loadInitialState(),
+  const [state, dispatch] = useReducer(appReducer, undefined, () =>
+    initialState ?? loadInitialState(),
   )
 
   useEffect(() => {
@@ -33,7 +32,11 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
   }, [state])
 
   useEffect(() => {
-    persistSupermarket(state)
+    persistMall(state)
+  }, [state])
+
+  useEffect(() => {
+    persistStore(state)
   }, [state])
 
   const value = useMemo(() => ({ state, dispatch }), [state])

@@ -2,15 +2,17 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { AuthPage } from '../features/auth/AuthPage'
 import { CatalogPlaceholder } from '../features/catalog/CatalogPlaceholder'
-import { SupermarketPage } from '../features/supermarket/SupermarketPage'
-import { RequireAuth, RequireSupermarket } from './guards'
+import { MallPage } from '../features/malls/MallPage'
+import { StorePage } from '../features/stores/StorePage'
+import { RequireAuth, RequireMall, RequireStore } from './guards'
 
 /**
  * Route table for the app.
  *
- * `/auth` is public. Every other route sits behind `RequireAuth`, and the
- * catalog additionally sits behind `RequireSupermarket`. Unknown paths fall
- * back to the root, which then applies the same guards.
+ * `/auth` is public. Every other route sits behind `RequireAuth`. The store
+ * picker additionally sits behind `RequireMall`, and the catalog sits behind
+ * both `RequireMall` and `RequireStore`, so browsing requires a mall AND a
+ * store. Unknown paths fall back to the root, which then applies the guards.
  */
 export function AppRoutes() {
   return (
@@ -18,10 +20,14 @@ export function AppRoutes() {
       <Route path="/auth" element={<AuthPage />} />
 
       <Route element={<RequireAuth />}>
-        <Route path="/" element={<SupermarketPage />} />
+        <Route path="/" element={<MallPage />} />
 
-        <Route element={<RequireSupermarket />}>
-          <Route path="/catalog" element={<CatalogPlaceholder />} />
+        <Route element={<RequireMall />}>
+          <Route path="/stores" element={<StorePage />} />
+
+          <Route element={<RequireStore />}>
+            <Route path="/catalog" element={<CatalogPlaceholder />} />
+          </Route>
         </Route>
       </Route>
 

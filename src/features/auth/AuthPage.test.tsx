@@ -42,7 +42,7 @@ describe('AuthPage', () => {
     await user.click(screen.getByRole('button', { name: 'Crear cuenta' }))
 
     expect(
-      await screen.findByRole('heading', { name: 'Elige tu supermercado' }),
+      await screen.findByRole('heading', { name: 'Elegí tu centro comercial' }),
     ).toBeInTheDocument()
 
     const stored = readStoredAuth()
@@ -63,7 +63,7 @@ describe('AuthPage', () => {
     await user.click(screen.getByRole('button', { name: 'Ingresar' }))
 
     expect(
-      await screen.findByRole('heading', { name: 'Elige tu supermercado' }),
+      await screen.findByRole('heading', { name: 'Elegí tu centro comercial' }),
     ).toBeInTheDocument()
     expect(readStoredAuth().currentUser).toMatchObject({
       email: 'ana@example.com',
@@ -99,7 +99,7 @@ describe('AuthPage', () => {
     renderApp(['/'])
 
     expect(
-      await screen.findByRole('heading', { name: 'Elige tu supermercado' }),
+      await screen.findByRole('heading', { name: 'Elegí tu centro comercial' }),
     ).toBeInTheDocument()
     expect(screen.queryByLabelText('Contraseña')).not.toBeInTheDocument()
   })
