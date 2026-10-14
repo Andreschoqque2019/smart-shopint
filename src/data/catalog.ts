@@ -15,10 +15,10 @@ export const supermarkets: Supermarket[] = [
 ]
 
 export const categories: Category[] = [
-  { id: 'cat-groceries', name: 'Groceries' },
-  { id: 'cat-dairy', name: 'Dairy' },
-  { id: 'cat-beverages', name: 'Beverages' },
-  { id: 'cat-cleaning', name: 'Cleaning' },
+  { id: 'cat-groceries', name: 'Abarrotes' },
+  { id: 'cat-dairy', name: 'Lácteos' },
+  { id: 'cat-beverages', name: 'Bebidas' },
+  { id: 'cat-cleaning', name: 'Limpieza' },
   { id: 'cat-snacks', name: 'Snacks' },
 ]
 
