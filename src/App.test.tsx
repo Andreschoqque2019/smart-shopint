@@ -1,14 +1,19 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import App from './App'
 
 describe('App', () => {
-  it('renders the application title as a level 1 heading', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+  })
+
+  it('opens on the auth gate when there is no session', async () => {
     render(<App />)
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'SMART SHOPINT' }),
+      await screen.findByRole('heading', { level: 1, name: 'SMART SHOPINT' }),
     ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Ingresar' })).toBeInTheDocument()
   })
 })

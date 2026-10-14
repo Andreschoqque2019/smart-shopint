@@ -38,13 +38,22 @@ payment provider. Mock data lives in `localStorage`.
 
 ```
 src/
+  app/         store.ts + AppStore.tsx (Context + reducer), guards.tsx, routes.tsx
   data/        types.ts (mock domain model), catalog.ts (mock seed)
-  lib/         storage.ts (typed localStorage wrapper)
+  features/    auth/ (register/login), supermarket/ (picker), catalog/ (placeholder)
+  lib/         storage.ts (typed localStorage wrapper), auth.ts (simulated auth)
   styles/      index.css
-  test/        setup.ts (Vitest setup)
-  App.tsx      slice 1 placeholder shell
+  test/        setup.ts (Vitest setup), renderApp.tsx (route test helper)
+  App.tsx      application shell (store + router)
   main.tsx     application entry point
 ```
 
-Feature folders (`app/`, `features/`, `components/`) and `lib/resolveSku.ts` are
-added by later delivery slices. See the SDD change `smart-shopint-mvp`.
+Remaining feature folders (scanner, cart, checkout, receipt, history) and
+`lib/resolveSku.ts` are added by later delivery slices. See the SDD change
+`smart-shopint-mvp`.
+
+## User interface language
+
+All user-visible copy is in Spanish. Code, identifiers, comments and commit
+messages stay in English.
+

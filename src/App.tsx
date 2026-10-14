@@ -1,19 +1,22 @@
+import { HashRouter } from 'react-router-dom'
+
+import { AppProvider } from './app/AppStore'
+import { AppRoutes } from './app/routes'
+
 /**
- * Slice 1 placeholder shell.
+ * Application shell.
  *
- * This exists only so the dev server and the test runner have something to
- * render. The routed application shell arrives in a later slice; the tooling,
- * domain types, storage layer, and catalog seed are the real deliverables here.
+ * Wraps the route table in the persisted store and a router. `HashRouter` is
+ * used so the demo survives being served from a static host without a server
+ * rewrite (the design's documented fallback for hostless builds).
  */
 function App() {
   return (
-    <main className="min-h-dvh bg-slate-50 p-6 text-slate-900">
-      <h1 className="text-2xl font-bold tracking-tight">SMART SHOPINT</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        Foundations ready: tooling, mock domain types, storage layer, and catalog
-        seed.
-      </p>
-    </main>
+    <AppProvider>
+      <HashRouter>
+        <AppRoutes />
+      </HashRouter>
+    </AppProvider>
   )
 }
 
