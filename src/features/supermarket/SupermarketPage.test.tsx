@@ -29,9 +29,9 @@ describe('SupermarketPage', () => {
     renderApp(['/'])
 
     expect(
-      await screen.findByRole('button', { name: 'Wong' }),
+      await screen.findByRole('button', { name: 'Mall del Sur' }),
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Metro' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Makro' })).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Plaza Vea' }),
     ).toBeInTheDocument()
@@ -41,14 +41,14 @@ describe('SupermarketPage', () => {
     const user = userEvent.setup()
     renderApp(['/'])
 
-    await user.click(await screen.findByRole('button', { name: 'Metro' }))
+    await user.click(await screen.findByRole('button', { name: 'Makro' }))
 
     expect(
       await screen.findByRole('heading', { name: 'Catálogo' }),
     ).toBeInTheDocument()
     expect(
       JSON.parse(window.localStorage.getItem(StorageKeys.supermarket) as string),
-    ).toEqual({ id: 'sm-metro', name: 'Metro' })
+    ).toEqual({ id: 'sm-makro', name: 'Makro' })
   })
 
   it('prompts to choose when the catalog is opened directly', async () => {

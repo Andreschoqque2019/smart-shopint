@@ -25,7 +25,7 @@ describe('writeJSON', () => {
   it('serializes a value as JSON under the given key', () => {
     const line = {
       sku: 'SKU-1001',
-      supermarketId: 'sm-wong',
+      supermarketId: 'sm-mall-del-sur',
       qty: 2,
       unitPrice: 7.9,
     }
@@ -40,7 +40,7 @@ describe('writeJSON', () => {
 
 describe('readJSON', () => {
   it('round-trips a written value', () => {
-    const supermarket = { id: 'sm-wong', name: 'Wong' }
+    const supermarket = { id: 'sm-mall-del-sur', name: 'Mall del Sur' }
 
     writeJSON(StorageKeys.supermarket, supermarket)
 
@@ -90,7 +90,7 @@ describe('readJSON', () => {
 
 describe('removeJSON', () => {
   it('removes a single entry', () => {
-    writeJSON(StorageKeys.supermarket, { id: 'sm-wong' })
+    writeJSON(StorageKeys.supermarket, { id: 'sm-mall-del-sur' })
 
     removeJSON(StorageKeys.supermarket)
 
