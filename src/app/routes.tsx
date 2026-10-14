@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { AuthPage } from '../features/auth/AuthPage'
-import { CatalogPlaceholder } from '../features/catalog/CatalogPlaceholder'
+import { CatalogPage } from '../features/catalog/CatalogPage'
 import { MallPage } from '../features/malls/MallPage'
 import { StorePage } from '../features/stores/StorePage'
 import { RequireAuth, RequireMall, RequireStore } from './guards'
@@ -26,7 +26,7 @@ export function AppRoutes() {
           <Route path="/stores" element={<StorePage />} />
 
           <Route element={<RequireStore />}>
-            <Route path="/catalog" element={<CatalogPlaceholder />} />
+            <Route path="/catalog" element={<CatalogPage />} />
           </Route>
         </Route>
       </Route>
