@@ -1,0 +1,73 @@
+/**
+ * Mock domain model for SMART SHOPINT.
+ *
+ * The application is a 100% frontend simulation: every entity below is stored
+ * in `localStorage` by the storage layer and never leaves the browser.
+ */
+
+/** Product identifier encoded in a product QR code. */
+export type Sku = string
+
+/** Currency used across the catalog and orders. */
+export type Currency = 'PEN'
+
+/** Simulated checkout payment method. Never charged over the network. */
+export type PaymentMethod = 'yape' | 'plin' | 'cash'
+
+/** A supermarket the user can shop in. */
+export interface Supermarket {
+  id: string
+  name: string
+}
+
+/** A catalog grouping used to render products section by section. */
+export interface Category {
+  id: string
+  name: string
+}
+
+/**
+ * A single priced product row.
+ *
+ * A product is keyed by the (`sku`, `supermarketId`) pair, so the same `sku`
+ * can be sold by several supermarkets at different prices.
+ */
+export interface Product {
+  sku: Sku
+  name: string
+  categoryId: string
+  supermarketId: string
+  price: number
+  currency: Currency
+  /** ISO date (YYYY-MM-DD) on which the product expires. */
+  expiryDate: string
+}
+
+/** One line of the shopping cart. Unit price is captured when added. */
+export interface CartLine {
+  sku: Sku
+  supermarketId: string
+  qty: number
+  unitPrice: number
+}
+
+/** The persisted cart. The displayed total is always derived from these lines. */
+export type Cart = CartLine[]
+
+/** A confirmed (simulated) purchase stored for the receipt and history. */
+export interface Order {
+  id: string
+  lines: CartLine[]
+  total: number
+  paymentMethod: PaymentMethod
+  /** ISO timestamp of when the order was confirmed. */
+  createdAt: string
+}
+
+/** A registered demo account. Credentials are local-only demo data. */
+export interface User {
+  id: string
+  email: string
+  name: string
+  password: string
+}
