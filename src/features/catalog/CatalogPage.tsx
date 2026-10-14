@@ -45,35 +45,45 @@ export function CatalogPage() {
           Esta tienda todavía no tiene catálogo.
         </p>
       ) : (
-        <div className="flex flex-col gap-6">
-          {groups.map(({ category, items }) => (
-            <section key={category.id} className="flex flex-col gap-3">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                {category.name}
-              </h2>
-              <ul className="flex flex-col gap-2">
-                {items.map((product) => (
-                  <li
-                    key={`${product.sku}-${product.storeId}`}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200"
-                  >
-                    <span className="flex flex-col">
-                      <span className="text-sm text-slate-900">
-                        {product.name}
+        <>
+          <button
+            type="button"
+            onClick={() => navigate('/scan')}
+            className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+          >
+            Escanear producto
+          </button>
+
+          <div className="flex flex-col gap-6">
+            {groups.map(({ category, items }) => (
+              <section key={category.id} className="flex flex-col gap-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  {category.name}
+                </h2>
+                <ul className="flex flex-col gap-2">
+                  {items.map((product) => (
+                    <li
+                      key={`${product.sku}-${product.storeId}`}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200"
+                    >
+                      <span className="flex flex-col">
+                        <span className="text-sm text-slate-900">
+                          {product.name}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {product.sku} · Vence {formatExpiry(product.expiryDate)}
+                        </span>
                       </span>
-                      <span className="text-xs text-slate-500">
-                        {product.sku} · Vence {formatExpiry(product.expiryDate)}
+                      <span className="text-sm font-semibold text-slate-900">
+                        {formatPrice(product.price, product.currency)}
                       </span>
-                    </span>
-                    <span className="text-sm font-semibold text-slate-900">
-                      {formatPrice(product.price, product.currency)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </>
       )}
 
       <button

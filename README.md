@@ -40,17 +40,17 @@ payment provider. Mock data lives in `localStorage`.
 src/
   app/         store.ts + AppStore.tsx (Context + reducer), guards.tsx, routes.tsx
   data/        types.ts (mock domain model), catalog.ts (mock seed)
-  features/    auth/ (register/login), malls/ (level 1 picker), stores/ (level 2 picker), catalog/ (placeholder)
-  lib/         storage.ts (typed localStorage wrapper), auth.ts (simulated auth)
+  features/    auth/ (register/login), malls/ (level 1 picker), stores/ (level 2 picker), catalog/ (grouped catalog), scan/ (QR scanner + simulated scan)
+  lib/         storage.ts (typed localStorage wrapper), auth.ts (simulated auth), sku.ts (QR sku lookup), format.ts (price/date display)
   styles/      index.css
   test/        setup.ts (Vitest setup), renderApp.tsx (route test helper)
   App.tsx      application shell (store + router)
   main.tsx     application entry point
 ```
 
-Remaining feature folders (scanner, cart, checkout, receipt, history) and
-`lib/resolveSku.ts` are added by later delivery slices. See the SDD change
-`smart-shopint-mvp`.
+Remaining feature folders (cart, checkout, receipt, history) and the
+product QR code of the receipt are added by later delivery slices. See the SDD
+change `smart-shopint-mvp`.
 
 ## User interface language
 
