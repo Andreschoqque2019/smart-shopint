@@ -54,6 +54,7 @@ export type AppAction =
   | { type: 'cart/remove'; sku: Sku; storeId: string }
   | { type: 'cart/clear-notice' }
   | { type: 'checkout/confirm'; order: Order }
+  | { type: 'demo/reset' }
 
 /** Storage guard for the persisted mall selection. */
 export function isMall(value: unknown): value is Mall {
@@ -121,18 +122,35 @@ export function isOrders(value: unknown): value is Order[] {
   return Array.isArray(value) && value.every(isOrder)
 }
 
+/**
+ * The state of a freshly installed app: no account, no selection, no cart and
+ * no purchase history. Backs the "reset demo data" control, which must leave
+ * the app exactly as if it had just been opened for the first time.
+ */
+export function emptyAppState(): AppState {
+  return {
+    accounts: [],
+    currentUser: null,
+    selectedMall: null,
+    selectedStore: null,
+    authError: null,
+    cart: [],
+    orders: [],
+    cartNotice: null,
+  }
+}
+
 /** Reads the persisted app state, falling back to empty slices. */
 export function loadInitialState(): AppState {
   const auth = readAuthRecord()
   return {
+    ...emptyAppState(),
     accounts: auth.accounts,
     currentUser: auth.currentUser,
     selectedMall: readJSON<Mall | null>(StorageKeys.mall, null, isMall),
     selectedStore: readJSON<Store | null>(StorageKeys.store, null, isStore),
-    authError: null,
     cart: readJSON<Cart>(StorageKeys.cart, [], isCart),
     orders: readJSON<Order[]>(StorageKeys.orders, [], isOrders),
-    cartNotice: null,
   }
 }
 
@@ -244,13 +262,27 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         cartNotice: null,
       }
 
+    case 'demo/reset':
+      // Wipes every slice in memory; the storage keys are dropped by the
+      // persist effects (which now remove `auth` too when it is empty).
+      return emptyAppState()
+
     default:
       return state
   }
 }
 
-/** Persists the auth-owned part of the state. */
+/**
+ * Persists or clears the auth-owned part of the state.
+ *
+ * An empty record (no accounts, no session) is removed instead of written, so
+ * resetting the demo data leaves no `shopint:v2:auth` key behind.
+ */
 export function persistAuth(state: AppState): void {
+  if (state.accounts.length === 0 && state.currentUser === null) {
+    removeJSON(StorageKeys.auth)
+    return
+  }
   const auth: AuthRecord = {
     accounts: state.accounts,
     currentUser: state.currentUser,

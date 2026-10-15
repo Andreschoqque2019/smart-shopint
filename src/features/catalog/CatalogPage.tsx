@@ -64,6 +64,14 @@ export function CatalogPage() {
         </button>
       </header>
 
+      <button
+        type="button"
+        onClick={() => navigate('/history')}
+        className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+      >
+        Mis compras
+      </button>
+
       {state.cartNotice && (
         <p
           role="status"

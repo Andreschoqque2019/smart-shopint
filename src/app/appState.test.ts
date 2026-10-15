@@ -6,6 +6,7 @@ import { StorageKeys } from '../lib/storage'
 import {
   appReducer,
   CART_CLEARED_MESSAGE,
+  emptyAppState,
   loadInitialState,
   type AppState,
 } from './appState'
@@ -145,5 +146,19 @@ describe('checkout/confirm', () => {
     expect(state.orders).toEqual([order])
     expect(state.cart).toEqual([])
     expect(state.cartNotice).toBeNull()
+  })
+})
+
+describe('demo/reset', () => {
+  it('returns a freshly installed state, with no session and no data', () => {
+    const seeded = baseState({
+      accounts: [{ id: 'user-1', name: 'Ana', email: 'ana@example.com', password: 'x' }],
+      currentUser: { id: 'user-1', name: 'Ana', email: 'ana@example.com', password: 'x' },
+      orders: [buildOrder([LINE], 'yape')],
+    })
+
+    const state = appReducer(seeded, { type: 'demo/reset' })
+
+    expect(state).toEqual(emptyAppState())
   })
 })
