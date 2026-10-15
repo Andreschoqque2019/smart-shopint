@@ -1,0 +1,21 @@
+/*
+ * Print styles for the receipt.
+ *
+ * The receipt is the only thing that should reach paper: everything marked
+ * `no-print` (navigation links, action buttons, history controls) is hidden and
+ * the page is flattened to black on white.
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .receipt {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

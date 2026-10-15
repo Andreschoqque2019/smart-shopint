@@ -90,7 +90,7 @@ describe('CheckoutPage', () => {
     expect(confirm).toBeEnabled()
   })
 
-  it('creates and persists the order, then empties the cart', async () => {
+  it('creates and persists the order, then lands on its receipt', async () => {
     const user = userEvent.setup()
     seedSession()
     seedCart([LECHE])
@@ -100,8 +100,9 @@ describe('CheckoutPage', () => {
     await user.click(await screen.findByRole('radio', { name: 'Yape' }))
     await user.click(screen.getByRole('button', { name: 'Confirmar pedido' }))
 
+    // The checkout redirects to the real receipt of the order just created.
     expect(
-      await screen.findByRole('heading', { name: 'Pedido confirmado' }),
+      await screen.findByRole('heading', { name: 'Gracias por tu compra' }),
     ).toBeInTheDocument()
 
     await waitFor(() => {
@@ -117,5 +118,8 @@ describe('CheckoutPage', () => {
     expect(stored[0].total).toBe(14.7)
     expect(stored[0].id).toMatch(/^ord-/)
     expect(window.localStorage.getItem(StorageKeys.cart)).toBeNull()
+
+    // The receipt shows the very same order id the checkout persisted.
+    expect(screen.getByText(stored[0].id)).toBeInTheDocument()
   })
 })

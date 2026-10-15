@@ -1,5 +1,5 @@
 import { useReducer } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
 import { cartTotal } from '../../lib/cart'
@@ -18,7 +18,8 @@ import { paymentMethodLabels, paymentMethods } from '../../lib/payment'
  * The payment is a local simulation: the screen states it permanently, and
  * confirming only builds an `Order` in memory (persisted to localStorage) and
  * empties the cart. No network request is ever made. Reaching this screen with
- * an empty cart is blocked.
+ * an empty cart is blocked. On confirmation the machine reaches `done` and the
+ * screen redirects to the real receipt of the freshly created order.
  */
 export function CheckoutPage() {
   const { state, dispatch } = useAppStore()
@@ -35,11 +36,16 @@ export function CheckoutPage() {
       return
     }
     // idle/methodSelected -> confirming -> done. The order is built from the
-    // cart snapshot and stored; the cart is emptied by the store reducer.
+    // cart snapshot and stored; the cart is emptied by the store reducer. The
+    // `done` state below redirects to the receipt.
     send({ type: 'confirm' })
     const order = buildOrder(state.cart, selectedMethod)
     dispatch({ type: 'checkout/confirm', order })
     send({ type: 'complete', orderId: order.id })
+  }
+
+  if (view.status === 'done') {
+    return <Navigate to={`/receipt/${view.orderId}`} replace />
   }
 
   return (
@@ -61,26 +67,7 @@ export function CheckoutPage() {
         </p>
       </div>
 
-      {view.status === 'done' ? (
-        <section className="flex flex-col gap-3 rounded-2xl bg-emerald-50 p-5 shadow-sm ring-1 ring-emerald-200">
-          <h2 className="text-lg font-semibold text-slate-900">
-            Pedido confirmado
-          </h2>
-          <p className="text-sm text-slate-700">
-            ID del pedido: <span className="font-mono">{view.orderId}</span>
-          </p>
-          <p className="text-sm text-slate-700">
-            Método: {paymentMethodLabels[view.method]}
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/catalog')}
-            className="self-start rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
-          >
-            Volver al catálogo
-          </button>
-        </section>
-      ) : view.status === 'blocked' ? (
+      {view.status === 'blocked' ? (
         <section
           role="alert"
           className="flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
