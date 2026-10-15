@@ -1,3 +1,4 @@
+import { useAppStore } from '../../app/store'
 import { categories } from '../../data/catalog'
 import type { Product } from '../../data/types'
 import { formatExpiry, formatPrice } from '../../lib/format'
@@ -10,9 +11,11 @@ interface ProductDetailCardProps {
  * Detail card shown when a scan resolves to a product of the current store.
  *
  * The QR payload only carries the sku; the price and expiry below come from the
- * catalog lookup, never from the code.
+ * catalog lookup, never from the code. A valid scan can be added to the cart
+ * directly from here.
  */
 export function ProductDetailCard({ product }: ProductDetailCardProps) {
+  const { dispatch } = useAppStore()
   const category = categories.find((item) => item.id === product.categoryId)
 
   return (
@@ -45,6 +48,24 @@ export function ProductDetailCard({ product }: ProductDetailCardProps) {
           </dd>
         </div>
       </dl>
+
+      <button
+        type="button"
+        onClick={() =>
+          dispatch({
+            type: 'cart/add',
+            line: {
+              sku: product.sku,
+              storeId: product.storeId,
+              qty: 1,
+              unitPrice: product.price,
+            },
+          })
+        }
+        className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+      >
+        Agregar al carrito
+      </button>
     </section>
   )
 }

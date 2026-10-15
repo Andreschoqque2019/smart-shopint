@@ -4,6 +4,7 @@ import {
   appReducer,
   loadInitialState,
   persistAuth,
+  persistCart,
   persistMall,
   persistStore,
   type AppState,
@@ -37,6 +38,10 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 
   useEffect(() => {
     persistStore(state)
+  }, [state])
+
+  useEffect(() => {
+    persistCart(state)
   }, [state])
 
   const value = useMemo(() => ({ state, dispatch }), [state])

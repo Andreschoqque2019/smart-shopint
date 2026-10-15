@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
 import { products } from '../../data/catalog'
+import { cartCount } from '../../lib/cart'
 import { resolveSku } from '../../lib/sku'
 import { ScanPanel } from './ScanPanel'
 import { ScanResult } from './ScanResult'
@@ -40,12 +41,21 @@ export function ScanPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
-      <header className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-slate-500">Escanear producto</p>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          {store.name}
-        </h1>
-        {mall && <p className="text-sm text-slate-600">{mall.name}</p>}
+      <header className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <p className="text-sm font-medium text-slate-500">Escanear producto</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            {store.name}
+          </h1>
+          {mall && <p className="text-sm text-slate-600">{mall.name}</p>}
+        </div>
+        <button
+          type="button"
+          onClick={() => navigate('/cart')}
+          className="shrink-0 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+        >
+          Carrito ({cartCount(state.cart)})
+        </button>
       </header>
 
       <ScanPanel onDecode={handleDecode} />
