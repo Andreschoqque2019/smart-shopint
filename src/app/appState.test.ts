@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import type { CartLine, Mall, Store } from '../data/types'
+import { buildOrder } from '../lib/order'
 import { StorageKeys } from '../lib/storage'
 import {
   appReducer,
@@ -50,6 +51,7 @@ function baseState(overrides: Partial<AppState> = {}): AppState {
     selectedStore: TOTTUS,
     authError: null,
     cart: [LINE],
+    orders: [],
     cartNotice: null,
     ...overrides,
   }
@@ -60,20 +62,25 @@ describe('loadInitialState', () => {
     window.localStorage.clear()
   })
 
-  it('restores the cart from localStorage', () => {
+  it('restores the cart and the orders from localStorage', () => {
+    const order = buildOrder([LINE], 'yape')
     window.localStorage.setItem(StorageKeys.cart, JSON.stringify([LINE]))
+    window.localStorage.setItem(StorageKeys.orders, JSON.stringify([order]))
 
     const state = loadInitialState()
 
     expect(state.cart).toEqual([LINE])
+    expect(state.orders).toEqual([order])
   })
 
-  it('falls back to an empty cart when storage is corrupt', () => {
+  it('falls back to empty slices when storage is corrupt', () => {
     window.localStorage.setItem(StorageKeys.cart, '{"not":"an array"}')
+    window.localStorage.setItem(StorageKeys.orders, 'not-json')
 
     const state = loadInitialState()
 
     expect(state.cart).toEqual([])
+    expect(state.orders).toEqual([])
   })
 })
 
@@ -126,6 +133,17 @@ describe('store-scoped cart', () => {
     const state = appReducer(baseState(), { type: 'mall/select', mall: MALL_DEL_SUR })
 
     expect(state.cart).toEqual([LINE])
+    expect(state.cartNotice).toBeNull()
+  })
+})
+
+describe('checkout/confirm', () => {
+  it('appends the order and empties the cart', () => {
+    const order = buildOrder([LINE], 'plin')
+    const state = appReducer(baseState(), { type: 'checkout/confirm', order })
+
+    expect(state.orders).toEqual([order])
+    expect(state.cart).toEqual([])
     expect(state.cartNotice).toBeNull()
   })
 })

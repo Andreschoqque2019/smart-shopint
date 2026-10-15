@@ -6,6 +6,7 @@ import {
   persistAuth,
   persistCart,
   persistMall,
+  persistOrders,
   persistStore,
   type AppState,
 } from './appState'
@@ -42,6 +43,10 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 
   useEffect(() => {
     persistCart(state)
+  }, [state])
+
+  useEffect(() => {
+    persistOrders(state)
   }, [state])
 
   const value = useMemo(() => ({ state, dispatch }), [state])

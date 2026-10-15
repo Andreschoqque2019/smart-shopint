@@ -1,4 +1,4 @@
-import type { Cart, CartLine, Mall, Sku, Store, User } from '../data/types'
+import type { Cart, CartLine, Mall, Order, Sku, Store, User } from '../data/types'
 import {
   authenticate,
   type AuthError,
@@ -35,6 +35,8 @@ export interface AppState {
   authError: AuthError | null
   /** The persisted cart. Its total is always derived, never stored. */
   cart: Cart
+  /** Confirmed (simulated) orders, oldest first. */
+  orders: Order[]
   /** Ephemeral message about the cart (e.g. cleared on a store change). */
   cartNotice: string | null
 }
@@ -51,6 +53,7 @@ export type AppAction =
   | { type: 'cart/decrement'; sku: Sku; storeId: string }
   | { type: 'cart/remove'; sku: Sku; storeId: string }
   | { type: 'cart/clear-notice' }
+  | { type: 'checkout/confirm'; order: Order }
 
 /** Storage guard for the persisted mall selection. */
 export function isMall(value: unknown): value is Mall {
@@ -98,6 +101,26 @@ export function isCart(value: unknown): value is Cart {
   return Array.isArray(value) && value.every(isCartLine)
 }
 
+/** Storage guard for a persisted order. */
+export function isOrder(value: unknown): value is Order {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const candidate = value as Record<string, unknown>
+  return (
+    typeof candidate.id === 'string' &&
+    typeof candidate.total === 'number' &&
+    typeof candidate.paymentMethod === 'string' &&
+    typeof candidate.createdAt === 'string' &&
+    isCart(candidate.lines)
+  )
+}
+
+/** Storage guard for the persisted order list. */
+export function isOrders(value: unknown): value is Order[] {
+  return Array.isArray(value) && value.every(isOrder)
+}
+
 /** Reads the persisted app state, falling back to empty slices. */
 export function loadInitialState(): AppState {
   const auth = readAuthRecord()
@@ -108,6 +131,7 @@ export function loadInitialState(): AppState {
     selectedStore: readJSON<Store | null>(StorageKeys.store, null, isStore),
     authError: null,
     cart: readJSON<Cart>(StorageKeys.cart, [], isCart),
+    orders: readJSON<Order[]>(StorageKeys.orders, [], isOrders),
     cartNotice: null,
   }
 }
@@ -212,6 +236,14 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'cart/clear-notice':
       return state.cartNotice === null ? state : { ...state, cartNotice: null }
 
+    case 'checkout/confirm':
+      return {
+        ...state,
+        orders: [...state.orders, action.order],
+        cart: [],
+        cartNotice: null,
+      }
+
     default:
       return state
   }
@@ -250,5 +282,14 @@ export function persistCart(state: AppState): void {
     writeJSON(StorageKeys.cart, state.cart)
   } else {
     removeJSON(StorageKeys.cart)
+  }
+}
+
+/** Persists the confirmed orders, or clears the key when there are none. */
+export function persistOrders(state: AppState): void {
+  if (state.orders.length > 0) {
+    writeJSON(StorageKeys.orders, state.orders)
+  } else {
+    removeJSON(StorageKeys.orders)
   }
 }
