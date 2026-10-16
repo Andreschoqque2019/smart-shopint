@@ -1,6 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { Button } from '../../components/ui/Button'
+import { ChevronRightIcon, MallIcon } from '../../components/ui/icons'
+import { IconTile, toneForIndex } from '../../components/ui/IconTile'
+import { Screen } from '../../components/ui/Screen'
 import { malls } from '../../data/catalog'
 import type { Mall } from '../../data/types'
 
@@ -20,42 +24,48 @@ export function MallPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
           Elegí tu centro comercial
         </h1>
         {state.currentUser && (
-          <p className="text-sm text-slate-600">
-            Hola, {state.currentUser.name}.
-          </p>
+          <p className="text-sm text-muted">Hola, {state.currentUser.name}.</p>
         )}
       </header>
 
       <ul className="flex flex-col gap-3">
-        {malls.map((mall) => (
+        {malls.map((mall, index) => (
           <li key={mall.id}>
             <button
               type="button"
               onClick={() => handleSelect(mall)}
-              className="flex w-full flex-col items-start gap-1 rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-900"
+              className="group flex w-full items-center gap-4 rounded-card bg-surface p-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover"
             >
-              <span className="text-base font-semibold text-slate-900">
-                {mall.name}
+              <IconTile tone={toneForIndex(index)}>
+                <MallIcon className="h-6 w-6" />
+              </IconTile>
+              <span className="flex min-w-0 flex-col">
+                <span className="text-base font-semibold text-ink">
+                  {mall.name}
+                </span>
+                <span className="text-sm text-muted">{mall.district}</span>
               </span>
-              <span className="text-sm text-slate-600">{mall.district}</span>
+              <ChevronRightIcon className="ml-auto h-5 w-5 shrink-0 text-subtle transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-primary" />
             </button>
           </li>
         ))}
       </ul>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => dispatch({ type: 'auth/logout' })}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Cerrar sesión
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }

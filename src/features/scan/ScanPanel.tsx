@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { IScannerControls } from '@zxing/browser'
 
+import { CameraIcon } from '../../components/ui/icons'
+import { IconTile } from '../../components/ui/IconTile'
+
 interface ScanPanelProps {
   /** Called with the raw payload (the sku) of every decoded QR code. */
   onDecode: (raw: string) => void
@@ -79,19 +82,25 @@ export function ScanPanel({ onDecode }: ScanPanelProps) {
 
   return (
     <section aria-labelledby="camera-heading" className="flex flex-col gap-3">
-      <h2 id="camera-heading" className="text-lg font-semibold text-slate-900">
-        Escanear con cámara
-      </h2>
+      <div className="flex items-center gap-3">
+        <IconTile tone="blue">
+          <CameraIcon className="h-6 w-6" />
+        </IconTile>
+        <h2 id="camera-heading" className="text-lg font-semibold text-ink">
+          Escanear con cámara
+        </h2>
+      </div>
+
       {status === 'unavailable' ? (
         <p
           role="status"
-          className="rounded-2xl bg-white p-4 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200"
+          className="rounded-card bg-surface p-4 text-sm text-muted shadow-card"
         >
           La cámara no está disponible en este navegador. Usá «Simular
           escaneo» para elegir un producto.
         </p>
       ) : (
-        <div className="overflow-hidden rounded-2xl bg-slate-900 ring-1 ring-slate-200">
+        <div className="overflow-hidden rounded-card bg-ink shadow-card">
           <video
             ref={videoRef}
             className="h-56 w-full object-cover"
@@ -100,7 +109,7 @@ export function ScanPanel({ onDecode }: ScanPanelProps) {
             aria-label="Vista de la cámara"
           />
           {status === 'starting' && (
-            <p className="bg-slate-900 px-4 py-2 text-center text-xs text-slate-300">
+            <p className="bg-ink px-4 py-2 text-center text-xs text-white/70">
               Activando la cámara…
             </p>
           )}

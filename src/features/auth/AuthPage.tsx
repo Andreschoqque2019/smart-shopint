@@ -2,6 +2,11 @@ import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { Button } from '../../components/ui/Button'
+import { Card } from '../../components/ui/Card'
+import { Logo } from '../../components/ui/Logo'
+import { Screen } from '../../components/ui/Screen'
+import { TextField } from '../../components/ui/TextField'
 import type { AuthError } from '../../lib/auth'
 
 type Mode = 'login' | 'register'
@@ -47,50 +52,46 @@ export function AuthPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center gap-6 px-6 py-10">
-      <header className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          SMART SHOPINT
-        </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Tu compra inteligente en el supermercado.
-        </p>
+    <Screen className="justify-center">
+      <header className="flex flex-col items-center gap-4 text-center">
+        <Logo />
+        <div className="flex flex-col gap-1">
+          <h1 className="text-[28px] font-extrabold tracking-tight text-ink">
+            SMART SHOPINT
+          </h1>
+          <p className="text-sm text-muted">
+            Tu compra inteligente en el supermercado.
+          </p>
+        </div>
       </header>
 
-      <form
-        className="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
-        onSubmit={handleSubmit}
-        aria-label={mode === 'register' ? 'Crear cuenta' : 'Ingresar'}
-      >
-        {mode === 'register' && (
-          <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-            Nombre
-            <input
-              type="text"
+      <Card>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit}
+          aria-label={mode === 'register' ? 'Crear cuenta' : 'Ingresar'}
+        >
+          {mode === 'register' && (
+            <TextField
+              label="Nombre"
               name="name"
               autoComplete="name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal text-slate-900 outline-none focus:border-slate-900"
             />
-          </label>
-        )}
+          )}
 
-        <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-          Correo electrónico
-          <input
+          <TextField
+            label="Correo electrónico"
             type="email"
             name="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal text-slate-900 outline-none focus:border-slate-900"
           />
-        </label>
 
-        <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-          Contraseña
-          <input
+          <TextField
+            label="Contraseña"
             type="password"
             name="password"
             autoComplete={
@@ -98,34 +99,30 @@ export function AuthPage() {
             }
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal text-slate-900 outline-none focus:border-slate-900"
           />
-        </label>
 
-        {state.authError && (
-          <p role="alert" className="text-sm font-medium text-red-600">
-            {AUTH_ERROR_MESSAGES[state.authError]}
-          </p>
-        )}
+          {state.authError && (
+            <p role="alert" className="text-sm font-medium text-primary">
+              {AUTH_ERROR_MESSAGES[state.authError]}
+            </p>
+          )}
 
-        <button
-          type="submit"
-          className="rounded-lg bg-slate-900 px-4 py-2.5 text-base font-semibold text-white transition-colors hover:bg-slate-700"
-        >
-          {mode === 'register' ? 'Crear cuenta' : 'Ingresar'}
-        </button>
-      </form>
+          <Button type="submit" className="mt-1">
+            {mode === 'register' ? 'Crear cuenta' : 'Ingresar'}
+          </Button>
+        </form>
+      </Card>
 
-      <p className="flex items-center justify-center gap-2 text-sm text-slate-600">
+      <p className="flex items-center justify-center gap-2 text-sm text-muted">
         {mode === 'register' ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}
         <button
           type="button"
-          className="font-semibold text-slate-900 underline"
+          className="font-semibold text-primary underline underline-offset-4"
           onClick={() => switchMode(mode === 'register' ? 'login' : 'register')}
         >
           {mode === 'register' ? 'Ingresar' : 'Crear cuenta'}
         </button>
       </p>
-    </main>
+    </Screen>
   )
 }

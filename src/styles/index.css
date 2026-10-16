@@ -1,23 +1,92 @@
+/*
+ * SMART SHOPINT — global stylesheet.
+ *
+ * Load order matters: Tailwind first, then the locally bundled Poppins weights,
+ * then the print rules. Every colour, radius, shadow and the typeface itself is
+ * declared once here as a Tailwind v4 theme token (`@theme`), so components only
+ * ever reference token classes (`bg-primary`, `text-muted`, `rounded-card`, …)
+ * and never a raw hex value.
+ */
 @import 'tailwindcss';
+@import '@fontsource/poppins/latin-400.css';
+@import '@fontsource/poppins/latin-600.css';
+@import '@fontsource/poppins/latin-700.css';
+@import '@fontsource/poppins/latin-800.css';
 @import './print.css';
 
-:root {
-  color-scheme: light;
+@theme {
+  /* Geometric sans, self-hosted so the demo never depends on the network. */
+  --font-sans:
+    'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Action red: the one and only action colour (logo, CTAs, icons, numbers). */
+  --color-primary: #e8112d;
+  --color-primary-strong: #e53935;
+
+  /* Text */
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #222222;
+  --color-muted: #555555;
+  --color-subtle: #777777;
+
+  /* Surfaces */
+  --color-surface: #ffffff;
+  --color-canvas: #f7f8fa;
+  --color-frame: #eceef2;
+  --color-soft: #eef0f4;
+  --color-line: #e4e7ec;
+
+  /* Pastel section surfaces */
+  --color-surface-rose: #fdecec;
+  --color-surface-blue: #eaf3ff;
+  --color-surface-mint: #eaf7ee;
+  --color-surface-lilac: #f1edfb;
+
+  /* Accents */
+  --color-accent-blue: #1e6fe8;
+  --color-accent-green: #2ba24c;
+  --color-accent-purple: #6a3dd1;
+
+  /* Success */
+  --color-success: #2bb24c;
+  --color-success-ink: #1b7a37;
+
+  /* Radii */
+  --radius-control: 10px;
+  --radius-card: 18px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 10px 26px rgba(0, 0, 0, 0.1);
+  --shadow-frame: 0 0 60px rgba(0, 0, 0, 0.06);
 }
 
-html,
-body,
-#root {
-  min-height: 100%;
-}
+@layer base {
+  html {
+    background-color: var(--color-frame);
+  }
 
-body {
-  margin: 0;
-  font-family:
-    system-ui,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-frame);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
+  }
+
+  input,
+  select,
+  button,
+  textarea {
+    font: inherit;
+  }
 }

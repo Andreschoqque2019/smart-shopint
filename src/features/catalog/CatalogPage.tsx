@@ -1,6 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { ProductImage } from '../../components/brand/ProductImage'
+import { Button } from '../../components/ui/Button'
+import { CartIcon, ReceiptIcon, ScanIcon, StoreIcon } from '../../components/ui/icons'
+import { IconTile } from '../../components/ui/IconTile'
+import { Screen } from '../../components/ui/Screen'
+import { SectionTitle } from '../../components/ui/SectionTitle'
 import { categories, products } from '../../data/catalog'
 import type { Product } from '../../data/types'
 import { cartCount } from '../../lib/cart'
@@ -44,88 +50,98 @@ export function CatalogPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
             Catálogo
           </h1>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             Comprando en {store?.name}
             {mall ? ` — ${mall.name}` : ''}.
           </p>
         </div>
-        <button
-          type="button"
+        <Button
+          size="sm"
+          fullWidth={false}
+          icon={<CartIcon className="h-4 w-4" />}
+          className="shrink-0"
           onClick={() => navigate('/cart')}
-          className="shrink-0 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
         >
           Carrito ({cartCount(state.cart)})
-        </button>
+        </Button>
       </header>
 
-      <button
-        type="button"
+      <Button
+        variant="secondary"
+        size="sm"
+        icon={<ReceiptIcon className="h-4 w-4" />}
         onClick={() => navigate('/history')}
-        className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
       >
         Mis compras
-      </button>
+      </Button>
 
       {state.cartNotice && (
         <p
           role="status"
-          className="rounded-2xl bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-amber-200"
+          className="flex items-start gap-3 rounded-card bg-surface-rose p-4 text-sm font-medium text-primary"
         >
           {state.cartNotice}
         </p>
       )}
 
       {storeProducts.length === 0 ? (
-        <p className="text-sm text-slate-600">
-          Esta tienda todavía no tiene catálogo.
-        </p>
+        <div className="flex flex-col items-center gap-4 rounded-card bg-surface p-8 text-center shadow-card">
+          <IconTile tone="lilac" shape="circle" className="h-14 w-14">
+            <StoreIcon className="h-7 w-7" />
+          </IconTile>
+          <p className="text-sm text-muted">
+            Esta tienda todavía no tiene catálogo.
+          </p>
+        </div>
       ) : (
         <>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<ScanIcon className="h-4 w-4" />}
             onClick={() => navigate('/scan')}
-            className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
           >
             Escanear producto
-          </button>
+          </Button>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-7">
             {groups.map((group) => (
               <section key={group.category.id} className="flex flex-col gap-3">
-                <h2 className="text-lg font-semibold text-slate-900">
-                  {group.category.name}
-                </h2>
+                <SectionTitle>{group.category.name}</SectionTitle>
                 <ul className="flex flex-col gap-3">
                   {group.items.map((product) => (
                     <li
                       key={`${product.sku}:${product.storeId}`}
-                      className="flex items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200"
+                      className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card"
                     >
-                      <div className="flex min-w-0 flex-col gap-1">
-                        <span className="text-sm font-semibold text-slate-900">
+                      <ProductImage product={product} />
+                      <div className="flex min-w-0 flex-1 flex-col gap-1">
+                        <span className="text-sm font-semibold text-ink">
                           {product.name}
                         </span>
-                        <span className="text-xs text-slate-500">
-                          {product.sku} · Vence {formatExpiry(product.expiryDate)}
+                        <span className="text-xs text-subtle">
+                          {product.sku} · Vence{' '}
+                          {formatExpiry(product.expiryDate)}
                         </span>
-                        <span className="text-sm font-semibold text-slate-900">
+                        <span className="text-base font-bold text-ink">
                           {formatPrice(product.price, product.currency)}
                         </span>
                       </div>
-                      <button
-                        type="button"
+                      <Button
+                        size="sm"
+                        fullWidth={false}
                         aria-label={`Agregar ${product.name}`}
+                        className="shrink-0 self-center"
                         onClick={() => handleAdd(product)}
-                        className="shrink-0 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
                       >
                         Agregar
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>
@@ -135,13 +151,15 @@ export function CatalogPage() {
         </>
       )}
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => navigate('/stores')}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Cambiar tienda
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }

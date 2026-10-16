@@ -1,6 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { CartIcon, StoreIcon } from '../../components/ui/icons'
+import { IconTile } from '../../components/ui/IconTile'
+import { Button } from '../../components/ui/Button'
+import { Screen } from '../../components/ui/Screen'
 import { CartPanel } from './CartPanel'
 
 /**
@@ -17,35 +21,39 @@ export function CartPage() {
   const cart = state.cart
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
           Tu carrito
         </h1>
         {state.selectedStore && (
-          <p className="text-sm text-slate-600">{state.selectedStore.name}</p>
+          <p className="text-sm text-muted">{state.selectedStore.name}</p>
         )}
       </header>
 
       {state.cartNotice && (
         <p
           role="status"
-          className="rounded-2xl bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-amber-200"
+          className="rounded-card bg-surface-rose p-4 text-sm font-medium text-primary"
         >
           {state.cartNotice}
         </p>
       )}
 
       {cart.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-slate-200">
-          <p className="text-sm text-slate-600">Tu carrito está vacío.</p>
-          <button
-            type="button"
+        <div className="flex flex-col items-center gap-4 rounded-card bg-surface p-8 text-center shadow-card">
+          <IconTile tone="rose" shape="circle" className="h-14 w-14">
+            <CartIcon className="h-7 w-7" />
+          </IconTile>
+          <p className="text-sm text-muted">Tu carrito está vacío.</p>
+          <Button
+            variant="secondary"
+            fullWidth={false}
+            icon={<StoreIcon className="h-4 w-4" />}
             onClick={() => navigate('/catalog')}
-            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
           >
             Ir al catálogo
-          </button>
+          </Button>
         </div>
       ) : (
         <>
@@ -70,23 +78,19 @@ export function CartPage() {
             }
           />
 
-          <button
-            type="button"
-            onClick={() => navigate('/checkout')}
-            className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
-          >
-            Ir al pago
-          </button>
+          <Button onClick={() => navigate('/checkout')}>Ir al pago</Button>
         </>
       )}
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => navigate('/catalog')}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Seguir comprando
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }

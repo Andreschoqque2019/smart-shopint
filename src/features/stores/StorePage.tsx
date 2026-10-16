@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { StoreBrand } from '../../components/brand/StoreBrand'
+import { Button } from '../../components/ui/Button'
+import { ChevronRightIcon } from '../../components/ui/icons'
+import { Pill } from '../../components/ui/Pill'
+import { Screen } from '../../components/ui/Screen'
 import { storeCategoryLabels, stores } from '../../data/catalog'
 import type { Store } from '../../data/types'
 
@@ -27,13 +32,13 @@ export function StorePage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-slate-500">Elegí tu tienda</p>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <p className="text-sm font-medium text-primary">Elegí tu tienda</p>
+        <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
           {mall.name}
         </h1>
-        <p className="text-sm text-slate-600">{mall.district}</p>
+        <p className="text-sm text-muted">{mall.district}</p>
       </header>
 
       <ul className="flex flex-col gap-3">
@@ -42,26 +47,32 @@ export function StorePage() {
             <button
               type="button"
               onClick={() => handleSelect(store)}
-              className="flex w-full flex-col items-start gap-1 rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-900"
+              className="group flex w-full items-center gap-4 rounded-card bg-surface p-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover"
             >
-              <span className="text-base font-semibold text-slate-900">
-                {store.name}
+              <StoreBrand name={store.name} />
+              <span className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-base font-semibold text-ink">
+                  {store.name}
+                </span>
+                <Pill className="self-start">
+                  {storeCategoryLabels[store.category]}
+                </Pill>
               </span>
-              <span className="text-sm text-slate-600">
-                {storeCategoryLabels[store.category]}
-              </span>
+              <ChevronRightIcon className="ml-auto h-5 w-5 shrink-0 text-subtle transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-primary" />
             </button>
           </li>
         ))}
       </ul>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => navigate('/')}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Volver a centros comerciales
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }

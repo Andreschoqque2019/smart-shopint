@@ -32,7 +32,7 @@ export function ScanResult({
     return (
       <p
         role="alert"
-        className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800 ring-1 ring-amber-200"
+        className="flex items-start gap-3 rounded-card bg-surface-rose p-4 text-sm font-medium text-primary"
       >
         Este producto ({resolution.product.name}) se vende en{' '}
         {otherStore?.name ?? 'otra tienda'}, no en {currentStoreName}.
@@ -43,7 +43,7 @@ export function ScanResult({
   return (
     <p
       role="alert"
-      className="rounded-2xl bg-red-50 p-4 text-sm text-red-700 ring-1 ring-red-200"
+      className="flex items-start gap-3 rounded-card bg-surface-rose p-4 text-sm font-medium text-primary"
     >
       No encontramos ningún producto con el código «{rawSku}». Verificá que el
       código sea correcto.

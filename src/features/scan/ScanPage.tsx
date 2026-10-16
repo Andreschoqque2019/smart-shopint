@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { Button } from '../../components/ui/Button'
+import { CartIcon } from '../../components/ui/icons'
+import { Screen } from '../../components/ui/Screen'
 import { products } from '../../data/catalog'
 import { cartCount } from '../../lib/cart'
 import { resolveSku } from '../../lib/sku'
@@ -40,22 +43,24 @@ export function ScanPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium text-slate-500">Escanear producto</p>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <p className="text-sm font-medium text-primary">Escanear producto</p>
+          <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
             {store.name}
           </h1>
-          {mall && <p className="text-sm text-slate-600">{mall.name}</p>}
+          {mall && <p className="text-sm text-muted">{mall.name}</p>}
         </div>
-        <button
-          type="button"
+        <Button
+          size="sm"
+          fullWidth={false}
+          icon={<CartIcon className="h-4 w-4" />}
+          className="shrink-0"
           onClick={() => navigate('/cart')}
-          className="shrink-0 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
         >
           Carrito ({cartCount(state.cart)})
-        </button>
+        </Button>
       </header>
 
       <ScanPanel onDecode={handleDecode} />
@@ -69,13 +74,15 @@ export function ScanPage() {
         />
       )}
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => navigate('/catalog')}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Volver al catálogo
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }

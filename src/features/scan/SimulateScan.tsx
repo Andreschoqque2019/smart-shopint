@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+import { Button } from '../../components/ui/Button'
+import { Card } from '../../components/ui/Card'
+import { ScanIcon } from '../../components/ui/icons'
+import { IconTile } from '../../components/ui/IconTile'
 import type { Product } from '../../data/types'
 
 interface SimulateScanProps {
@@ -23,47 +27,40 @@ export function SimulateScan({ products, onDecode }: SimulateScanProps) {
 
   function handleSelect(value: string) {
     setSelected(value)
-    if (value !== '') {
+    if (value) {
       onDecode(value)
     }
   }
 
   function handleManual() {
-    const value = manual.trim()
-    if (value !== '') {
-      onDecode(value)
+    if (manual) {
+      onDecode(manual)
     }
   }
 
   return (
-    <section
-      aria-labelledby="simulate-heading"
-      className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200"
-    >
-      <div className="flex flex-col gap-1">
-        <h2
-          id="simulate-heading"
-          className="text-lg font-semibold text-slate-900"
-        >
-          Simular escaneo
-        </h2>
-        <p className="text-sm text-slate-600">
-          Elegí un producto para simular el escaneo, sin cámara.
-        </p>
+    <Card as="section" className="flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <IconTile tone="mint">
+          <ScanIcon className="h-6 w-6" />
+        </IconTile>
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-ink">Simular escaneo</h2>
+          <p className="text-sm text-muted">
+            Elegí un producto para simular el escaneo, sin cámara.
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label
-          htmlFor="simulate-product"
-          className="text-sm font-medium text-slate-700"
-        >
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="simulate-product" className="text-sm font-medium text-muted">
           Producto
         </label>
         <select
           id="simulate-product"
           value={selected}
           onChange={(event) => handleSelect(event.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+          className="rounded-control bg-soft px-4 py-3 text-sm text-ink outline-none transition-all focus:ring-2 focus:ring-primary/30"
         >
           <option value="">Elegí un producto…</option>
           {products.map((product) => (
@@ -74,11 +71,8 @@ export function SimulateScan({ products, onDecode }: SimulateScanProps) {
         </select>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label
-          htmlFor="simulate-manual"
-          className="text-sm font-medium text-slate-700"
-        >
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="simulate-manual" className="text-sm font-medium text-muted">
           Otro código
         </label>
         <div className="flex gap-2">
@@ -88,17 +82,18 @@ export function SimulateScan({ products, onDecode }: SimulateScanProps) {
             value={manual}
             onChange={(event) => setManual(event.target.value)}
             placeholder="SKU-0000"
-            className="min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
+            className="min-w-0 flex-1 rounded-control bg-soft px-4 py-3 text-sm text-ink outline-none transition-all placeholder:text-subtle focus:ring-2 focus:ring-primary/30"
           />
-          <button
-            type="button"
+          <Button
+            size="sm"
+            fullWidth={false}
+            className="shrink-0"
             onClick={handleManual}
-            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
           >
             Escanear
-          </button>
+          </Button>
         </div>
       </div>
-    </section>
+    </Card>
   )
 }
