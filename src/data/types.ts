@@ -42,6 +42,24 @@ export interface Store {
 export interface Category {
   id: string
   name: string
+  /** Aisle that holds this category. */
+  aisleId: string
+}
+
+/**
+ * A physical store aisle.
+ *
+ * An aisle groups one or more catalog categories, so the code must never assume
+ * a 1:1 category-to-aisle mapping.
+ */
+export interface Aisle {
+  id: string
+  /** Number shown to the user as "Pasillo N". */
+  number: number
+  /** Spanish name shown next to the number, e.g. "Abarrotes y aceites". */
+  name: string
+  /** Ids of the categories that live in this aisle. */
+  categoryIds: string[]
 }
 
 /**

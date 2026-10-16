@@ -1,4 +1,4 @@
-import type { Category, Mall, Product, Store, StoreCategory } from './types'
+import type { Aisle, Category, Mall, Product, Store, StoreCategory } from './types'
 
 /**
  * Mock catalog seed.
@@ -50,12 +50,56 @@ export const storeCategoryLabels: Record<StoreCategory, string> = {
   'home center': 'Home center',
 }
 
+/**
+ * Aisles for the whole demo.
+ *
+ * Intentional simplification: the aisle layout is defined ONCE and shared by
+ * every store, instead of being keyed by store. A real product would keep a
+ * per-store layout, but modelling that here would explode this mock seed. This
+ * is a deliberate demo decision, not an oversight.
+ *
+ * The number stays numeric and the name a plain Spanish string; the word
+ * "Pasillo" is a UI label built by the screens, never stored here.
+ */
+export const aisles: Aisle[] = [
+  {
+    id: 'aisle-groceries',
+    number: 1,
+    name: 'Abarrotes y aceites',
+    categoryIds: ['cat-groceries'],
+  },
+  {
+    id: 'aisle-dairy',
+    number: 2,
+    name: 'Lácteos y huevos',
+    categoryIds: ['cat-dairy'],
+  },
+  {
+    id: 'aisle-beverages',
+    number: 3,
+    name: 'Bebidas y gaseosas',
+    categoryIds: ['cat-beverages'],
+  },
+  {
+    id: 'aisle-cleaning',
+    number: 4,
+    name: 'Limpieza del hogar',
+    categoryIds: ['cat-cleaning'],
+  },
+  {
+    id: 'aisle-snacks',
+    number: 5,
+    name: 'Snacks y galletas',
+    categoryIds: ['cat-snacks'],
+  },
+]
+
 export const categories: Category[] = [
-  { id: 'cat-groceries', name: 'Abarrotes' },
-  { id: 'cat-dairy', name: 'Lácteos' },
-  { id: 'cat-beverages', name: 'Bebidas' },
-  { id: 'cat-cleaning', name: 'Limpieza' },
-  { id: 'cat-snacks', name: 'Snacks' },
+  { id: 'cat-groceries', name: 'Abarrotes', aisleId: 'aisle-groceries' },
+  { id: 'cat-dairy', name: 'Lácteos', aisleId: 'aisle-dairy' },
+  { id: 'cat-beverages', name: 'Bebidas', aisleId: 'aisle-beverages' },
+  { id: 'cat-cleaning', name: 'Limpieza', aisleId: 'aisle-cleaning' },
+  { id: 'cat-snacks', name: 'Snacks', aisleId: 'aisle-snacks' },
 ]
 
 /**
