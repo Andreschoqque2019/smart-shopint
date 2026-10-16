@@ -15,7 +15,7 @@ export const malls: Mall[] = [
   { id: 'plaza-norte', name: 'Plaza Norte', district: 'Independencia' },
 ]
 
-/** The stores anchored in each mall. Only grocery-type stores carry a catalog. */
+/** The stores anchored in each mall. Every store carries its own catalog. */
 export const stores: Store[] = [
   // Mall del Sur
   { id: 'md-tottus', mallId: 'mall-del-sur', name: 'Tottus', category: 'supermercado' },
@@ -60,8 +60,15 @@ export const storeCategoryLabels: Record<StoreCategory, string> = {
  *
  * The number stays numeric and the name a plain Spanish string; the word
  * "Pasillo" is a UI label built by the screens, never stored here.
+ *
+ * There are THREE layouts (grocery, department store, home center) and their
+ * numbers REPEAT on purpose: each layout owns its own Pasillo 1-5. The repeat is
+ * harmless because a store is grouped from its OWN products only, so it renders
+ * just the aisles that actually hold them (see `groupProductsByAisle`). This is
+ * a design decision, not a collision.
  */
 export const aisles: Aisle[] = [
+  // Grocery layout (supermercado, hipermercado, mayorista).
   {
     id: 'aisle-groceries',
     number: 1,
@@ -92,6 +99,70 @@ export const aisles: Aisle[] = [
     name: 'Snacks y galletas',
     categoryIds: ['cat-snacks'],
   },
+
+  // Department store layout (tienda por departamento): Pasillo 1-5 again.
+  {
+    id: 'aisle-fashion-women',
+    number: 1,
+    name: 'Moda de mujer',
+    categoryIds: ['cat-fashion-women'],
+  },
+  {
+    id: 'aisle-fashion-men',
+    number: 2,
+    name: 'Moda de hombre',
+    categoryIds: ['cat-fashion-men'],
+  },
+  {
+    id: 'aisle-footwear',
+    number: 3,
+    name: 'Calzado',
+    categoryIds: ['cat-footwear'],
+  },
+  {
+    id: 'aisle-home-linen',
+    number: 4,
+    name: 'Hogar y blanco',
+    categoryIds: ['cat-home-linen'],
+  },
+  {
+    id: 'aisle-electronics',
+    number: 5,
+    name: 'Tecnología',
+    categoryIds: ['cat-electronics'],
+  },
+
+  // Home center layout (home center).
+  {
+    id: 'aisle-hardware',
+    number: 1,
+    name: 'Herramientas',
+    categoryIds: ['cat-hardware'],
+  },
+  {
+    id: 'aisle-paint',
+    number: 2,
+    name: 'Pintura y acabados',
+    categoryIds: ['cat-paint'],
+  },
+  {
+    id: 'aisle-plumbing',
+    number: 3,
+    name: 'Grifería y baño',
+    categoryIds: ['cat-plumbing'],
+  },
+  {
+    id: 'aisle-garden',
+    number: 4,
+    name: 'Jardín',
+    categoryIds: ['cat-garden'],
+  },
+  {
+    id: 'aisle-lighting',
+    number: 5,
+    name: 'Iluminación',
+    categoryIds: ['cat-lighting'],
+  },
 ]
 
 export const categories: Category[] = [
@@ -100,6 +171,20 @@ export const categories: Category[] = [
   { id: 'cat-beverages', name: 'Bebidas', aisleId: 'aisle-beverages' },
   { id: 'cat-cleaning', name: 'Limpieza', aisleId: 'aisle-cleaning' },
   { id: 'cat-snacks', name: 'Snacks', aisleId: 'aisle-snacks' },
+
+  // Department store categories.
+  { id: 'cat-fashion-women', name: 'Moda mujer', aisleId: 'aisle-fashion-women' },
+  { id: 'cat-fashion-men', name: 'Moda hombre', aisleId: 'aisle-fashion-men' },
+  { id: 'cat-footwear', name: 'Calzado', aisleId: 'aisle-footwear' },
+  { id: 'cat-home-linen', name: 'Hogar y blanco', aisleId: 'aisle-home-linen' },
+  { id: 'cat-electronics', name: 'Tecnología', aisleId: 'aisle-electronics' },
+
+  // Home center categories.
+  { id: 'cat-hardware', name: 'Herramientas', aisleId: 'aisle-hardware' },
+  { id: 'cat-paint', name: 'Pintura', aisleId: 'aisle-paint' },
+  { id: 'cat-plumbing', name: 'Grifería', aisleId: 'aisle-plumbing' },
+  { id: 'cat-garden', name: 'Jardín', aisleId: 'aisle-garden' },
+  { id: 'cat-lighting', name: 'Iluminación', aisleId: 'aisle-lighting' },
 ]
 
 /**
