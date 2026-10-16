@@ -21,8 +21,8 @@ import { formatExpiry, formatPrice } from '../../lib/format'
  * the sku, name, price and expiry date of each row. A summary at the top tells
  * the shopper what each aisle of this store actually holds. Every row can be
  * added to the cart, and the header exposes the cart with its item count.
- * Stores with no catalog (department stores and home centers) fall back to an
- * explicit message.
+ * A store with no products falls back to an explicit message; every seeded
+ * store has a catalog, so that branch stays as a defensive guard.
  */
 export function CatalogPage() {
   const { state, dispatch } = useAppStore()

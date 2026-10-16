@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { aisles, categories, products } from '../data/catalog'
+import { aisles, categories, products, stores } from '../data/catalog'
 import type { Aisle, Product } from '../data/types'
 import { groupProductsByAisle, resolveAisle } from './aisles'
 
@@ -47,6 +47,34 @@ describe('resolveAisle', () => {
       expect(aisle?.categoryIds).toContain(category.id)
     }
   })
+
+  it('repeats aisle numbers across layouts without repeating aisle ids', () => {
+    const ids = aisles.map((aisle) => aisle.id)
+
+    expect(new Set(ids).size).toBe(aisles.length)
+    // Pasillo 1 exists once per layout (grocery, department store, home center).
+    expect(aisles.filter((aisle) => aisle.number === 1)).toHaveLength(3)
+  })
+})
+
+describe('every store has a catalog', () => {
+  it('sells at least one product in every seeded store', () => {
+    for (const store of stores) {
+      expect(itemsOf(store.id).length, store.id).toBeGreaterThan(0)
+    }
+  })
+
+  it('reaches at least six products across at least four aisles per store', () => {
+    for (const store of stores) {
+      const items = itemsOf(store.id)
+
+      expect(items.length, store.id).toBeGreaterThanOrEqual(6)
+      expect(
+        groupProductsByAisle(items).length,
+        store.id,
+      ).toBeGreaterThanOrEqual(4)
+    }
+  })
 })
 
 describe('groupProductsByAisle', () => {
@@ -58,11 +86,44 @@ describe('groupProductsByAisle', () => {
     expect(numbers).toEqual([...numbers].sort((a, b) => a - b))
   })
 
-  it('drops every aisle with no products for the store', () => {
-    // Metro only sells groceries and dairy, so the other aisles must not appear.
-    const result = groupProductsByAisle(itemsOf('pn-metro'))
+  it('sends a department store to the fashion aisles, never the food ones', () => {
+    const names = groupProductsByAisle(itemsOf('md-ripley')).map(
+      (group) => group.aisle.name,
+    )
 
-    expect(result.map((group) => group.aisle.number)).toEqual([1, 2])
+    expect(names).toEqual([
+      'Moda de mujer',
+      'Moda de hombre',
+      'Calzado',
+      'Hogar y blanco',
+      'Tecnología',
+    ])
+    expect(names).not.toContain('Abarrotes y aceites')
+    expect(names).not.toContain('Lácteos y huevos')
+  })
+
+  it('sends a home center to the hardware aisles', () => {
+    const names = groupProductsByAisle(itemsOf('jp-sodimac')).map(
+      (group) => group.aisle.name,
+    )
+
+    expect(names).toEqual([
+      'Herramientas',
+      'Pintura y acabados',
+      'Grifería y baño',
+      'Jardín',
+      'Iluminación',
+    ])
+  })
+
+  it('drops every aisle with no products for the store', () => {
+    // A dairy-only basket: only aisle 2 survives, every other aisle drops.
+    const result = groupProductsByAisle([product({ categoryId: 'cat-dairy' })])
+
+    expect(result.map((group) => group.aisle.number)).toEqual([2])
+    expect(result.map((group) => group.aisle.name)).toEqual([
+      'Lácteos y huevos',
+    ])
   })
 
   it('groups every category of a multi-category aisle into a single group', () => {

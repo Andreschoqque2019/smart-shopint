@@ -47,18 +47,11 @@ describe('catalog seed', () => {
     }
   })
 
-  it('keeps the catalog on grocery-type stores only', () => {
+  it('carries a catalog for every store, not only grocery-type ones', () => {
     const catalogStoreIds = new Set(products.map((p) => p.storeId))
-    const groceryCategories = new Set([
-      'supermercado',
-      'hipermercado',
-      'mayorista',
-    ])
 
-    for (const storeId of catalogStoreIds) {
-      const store = stores.find((candidate) => candidate.id === storeId)
-      expect(store).toBeDefined()
-      expect(groceryCategories.has(store!.category)).toBe(true)
+    for (const store of stores) {
+      expect(catalogStoreIds.has(store.id), store.id).toBe(true)
     }
   })
 

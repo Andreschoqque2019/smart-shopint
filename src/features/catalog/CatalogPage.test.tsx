@@ -1,8 +1,27 @@
 import { cleanup, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { Product } from '../../data/types'
 import { StorageKeys } from '../../lib/storage'
 import { renderApp } from '../../test/renderApp'
+
+/**
+ * Every seeded store now carries a catalog, so the "no catalog" screen can only
+ * be reached by emptying the seed on purpose. `catalog.products` is the very
+ * array the app reads from `src/data/catalog`, so one test can blank it and
+ * restore it afterwards without weakening the assertion.
+ */
+const catalog = vi.hoisted(() => ({
+  products: [] as Product[],
+  seed: [] as Product[],
+}))
+
+vi.mock('../../data/catalog', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../data/catalog')>()
+  catalog.seed = [...actual.products]
+  catalog.products = [...actual.products]
+  return { ...actual, products: catalog.products }
+})
 
 const STORED_USER = {
   id: 'user-seed',
@@ -56,6 +75,8 @@ function seedSelection(store: unknown, mall: unknown = MALL_DEL_SUR) {
 describe('CatalogPage', () => {
   beforeEach(() => {
     window.localStorage.clear()
+    // Restore the seed rows in case a previous test blanked the catalog.
+    catalog.products.splice(0, catalog.products.length, ...catalog.seed)
   })
 
   it('restores the mall and store selection from storage', async () => {
@@ -143,6 +164,10 @@ describe('CatalogPage', () => {
   })
 
   it('explains that a store without catalog has no products', async () => {
+    // No seeded store reaches this state any more, so the defensive screen is
+    // simulated by emptying the catalog the page reads. The assertion stays
+    // intact: an empty store must still show this message.
+    catalog.products.length = 0
     seedSelection(RIPLEY)
 
     renderApp(['/catalog'])
