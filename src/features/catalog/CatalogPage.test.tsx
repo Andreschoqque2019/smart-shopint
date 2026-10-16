@@ -71,24 +71,51 @@ describe('CatalogPage', () => {
     ).toBeInTheDocument()
   })
 
-  it('groups the products of the chosen store by category', async () => {
+  it('groups the products of the chosen store by aisle', async () => {
     seedSelection(TOTTUS)
 
     renderApp(['/catalog'])
 
-    await screen.findByText('Leche Gloria Entera 400g')
+    await screen.findAllByText('Leche Gloria Entera 400g')
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Lácteos' }),
+      screen.getByRole('heading', {
+        level: 2,
+        name: 'Pasillo 2 · Lácteos y huevos',
+      }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Abarrotes' }),
+      screen.getByRole('heading', {
+        level: 2,
+        name: 'Pasillo 1 · Abarrotes y aceites',
+      }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Bebidas' }),
+      screen.getByRole('heading', {
+        level: 2,
+        name: 'Pasillo 3 · Bebidas y gaseosas',
+      }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Snacks' }),
+      screen.getByRole('heading', {
+        level: 2,
+        name: 'Pasillo 5 · Snacks y galletas',
+      }),
     ).toBeInTheDocument()
+  })
+
+  it('summarizes what each aisle of this store holds', async () => {
+    seedSelection(TOTTUS)
+
+    renderApp(['/catalog'])
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 2,
+        name: 'Pasillos de esta tienda',
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Pasillo 2')).toBeInTheDocument()
+    expect(screen.getByText('Lácteos y huevos')).toBeInTheDocument()
   })
 
   it('exposes the sku, name and expiry of each product', async () => {

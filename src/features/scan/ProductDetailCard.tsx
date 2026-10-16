@@ -1,9 +1,11 @@
 import { ProductImage } from '../../components/brand/ProductImage'
 import { Button } from '../../components/ui/Button'
 import { CartIcon } from '../../components/ui/icons'
+import { Pill } from '../../components/ui/Pill'
 import { useAppStore } from '../../app/store'
 import { categories } from '../../data/catalog'
 import type { Product } from '../../data/types'
+import { resolveAisle } from '../../lib/aisles'
 import { formatExpiry, formatPrice } from '../../lib/format'
 
 interface ProductDetailCardProps {
@@ -20,6 +22,7 @@ interface ProductDetailCardProps {
 export function ProductDetailCard({ product }: ProductDetailCardProps) {
   const { dispatch } = useAppStore()
   const category = categories.find((item) => item.id === product.categoryId)
+  const aisle = resolveAisle(product.categoryId)
 
   function handleAdd() {
     dispatch({
@@ -42,9 +45,12 @@ export function ProductDetailCard({ product }: ProductDetailCardProps) {
         <ProductImage product={product} className="h-16 w-16" />
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="text-lg font-semibold text-ink">{product.name}</h2>
-          <p className="text-sm text-muted">
-            {category?.name ?? 'Sin categoría'}
-          </p>
+          <span className="flex flex-wrap items-center gap-2">
+            <span className="text-sm text-muted">
+              {category?.name ?? 'Sin categoría'}
+            </span>
+            {aisle ? <Pill>Pasillo {aisle.number}</Pill> : null}
+          </span>
         </div>
       </div>
 

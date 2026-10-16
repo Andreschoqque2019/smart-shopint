@@ -80,6 +80,7 @@ describe('ScanPage', () => {
     expect(within(card).getByText('Leche Gloria Entera 400g')).toBeInTheDocument()
     expect(within(card).getByText('S/ 4.90')).toBeInTheDocument()
     expect(within(card).getByText('15/03/2027')).toBeInTheDocument()
+    expect(within(card).getByText('Pasillo 2')).toBeInTheDocument()
   })
 
   it('shows no card and an error banner for an unknown sku', async () => {

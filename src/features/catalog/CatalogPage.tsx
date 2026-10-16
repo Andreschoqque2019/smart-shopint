@@ -5,20 +5,24 @@ import { ProductImage } from '../../components/brand/ProductImage'
 import { Button } from '../../components/ui/Button'
 import { CartIcon, ReceiptIcon, ScanIcon, StoreIcon } from '../../components/ui/icons'
 import { IconTile } from '../../components/ui/IconTile'
+import { Pill } from '../../components/ui/Pill'
 import { Screen } from '../../components/ui/Screen'
 import { SectionTitle } from '../../components/ui/SectionTitle'
-import { categories, products } from '../../data/catalog'
+import { products } from '../../data/catalog'
 import type { Product } from '../../data/types'
+import { groupProductsByAisle } from '../../lib/aisles'
 import { cartCount } from '../../lib/cart'
 import { formatExpiry, formatPrice } from '../../lib/format'
 
 /**
  * Product catalog for the selected store.
  *
- * Lists every product the chosen store sells, grouped by category, and exposes
- * the sku, name, price and expiry date of each row. Every row can be added to
- * the cart, and the header exposes the cart with its item count. Stores with no
- * catalog (department stores and home centers) fall back to an explicit message.
+ * Lists every product the chosen store sells, grouped by aisle, and exposes
+ * the sku, name, price and expiry date of each row. A summary at the top tells
+ * the shopper what each aisle of this store actually holds. Every row can be
+ * added to the cart, and the header exposes the cart with its item count.
+ * Stores with no catalog (department stores and home centers) fall back to an
+ * explicit message.
  */
 export function CatalogPage() {
   const { state, dispatch } = useAppStore()
@@ -30,12 +34,9 @@ export function CatalogPage() {
     ? products.filter((product) => product.storeId === store.id)
     : []
 
-  const groups = categories
-    .map((category) => ({
-      category,
-      items: storeProducts.filter((product) => product.categoryId === category.id),
-    }))
-    .filter((group) => group.items.length > 0)
+  // Aisles are derived from the store's real products, never hardcoded: an
+  // aisle with no products for this store simply does not show up.
+  const aisleGroups = groupProductsByAisle(storeProducts)
 
   function handleAdd(product: Product) {
     dispatch({
@@ -101,6 +102,31 @@ export function CatalogPage() {
         </div>
       ) : (
         <>
+          <section
+            aria-label="Pasillos de esta tienda"
+            className="flex flex-col gap-3"
+          >
+            <SectionTitle>Pasillos de esta tienda</SectionTitle>
+            <ul className="flex flex-col gap-3">
+              {aisleGroups.map(({ aisle, items }) => (
+                <li
+                  key={aisle.id}
+                  className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card"
+                >
+                  <Pill className="shrink-0">Pasillo {aisle.number}</Pill>
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-sm font-semibold text-ink">
+                      {aisle.name}
+                    </span>
+                    <span className="truncate text-xs text-subtle">
+                      {items.map((item) => item.name).join(' · ')}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
           <Button
             variant="secondary"
             size="sm"
@@ -111,9 +137,11 @@ export function CatalogPage() {
           </Button>
 
           <div className="flex flex-col gap-7">
-            {groups.map((group) => (
-              <section key={group.category.id} className="flex flex-col gap-3">
-                <SectionTitle>{group.category.name}</SectionTitle>
+            {aisleGroups.map((group) => (
+              <section key={group.aisle.id} className="flex flex-col gap-3">
+                <SectionTitle>
+                  {`Pasillo ${group.aisle.number} · ${group.aisle.name}`}
+                </SectionTitle>
                 <ul className="flex flex-col gap-3">
                   {group.items.map((product) => (
                     <li
