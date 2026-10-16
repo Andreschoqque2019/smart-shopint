@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { cn } from './cn'
-
-type TileTone = 'rose' | 'blue' | 'mint' | 'lilac'
+import type { TileTone } from './tileTone'
 
 interface IconTileProps {
   children: ReactNode
@@ -17,13 +16,6 @@ const tones: Record<TileTone, string> = {
   blue: 'bg-surface-blue text-accent-blue',
   mint: 'bg-surface-mint text-accent-green',
   lilac: 'bg-surface-lilac text-accent-purple',
-}
-
-const tonesOrder: TileTone[] = ['rose', 'blue', 'mint', 'lilac']
-
-/** Picks a tone from a list index, so tiles rotate deterministically. */
-export function toneForIndex(index: number): TileTone {
-  return tonesOrder[index % tonesOrder.length]
 }
 
 /**

@@ -2,6 +2,12 @@ import { useReducer } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { PaymentBrand } from '../../components/brand/PaymentBrand'
+import { Button } from '../../components/ui/Button'
+import { cn } from '../../components/ui/cn'
+import { BagIcon, BoltIcon, StoreIcon } from '../../components/ui/icons'
+import { IconTile } from '../../components/ui/IconTile'
+import { Screen } from '../../components/ui/Screen'
 import { cartTotal } from '../../lib/cart'
 import {
   checkoutReducer,
@@ -49,60 +55,74 @@ export function CheckoutPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-slate-500">Pago</p>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <p className="text-sm font-medium text-primary">Pago</p>
+        <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
           Confirmá tu pedido
         </h1>
       </header>
 
-      <div className="flex flex-col gap-1 rounded-2xl bg-amber-100 p-4 ring-1 ring-amber-300">
-        <p className="text-sm font-bold tracking-wide text-amber-900">
-          Pago SIMULADO
-        </p>
-        <p className="text-xs text-amber-900">
-          Esta compra es una simulación: no se cobra dinero real ni se contacta
-          a ningún proveedor de pagos.
-        </p>
+      <div className="flex items-start gap-3 rounded-card bg-surface p-4 shadow-card">
+        <IconTile tone="rose" shape="circle">
+          <BoltIcon className="h-5 w-5" />
+        </IconTile>
+        <div className="flex flex-col gap-1">
+          <p className="text-sm font-bold tracking-wide text-primary">
+            Pago SIMULADO
+          </p>
+          <p className="text-xs text-muted">
+            Esta compra es una simulación: no se cobra dinero real ni se
+            contacta a ningún proveedor de pagos.
+          </p>
+        </div>
       </div>
 
       {view.status === 'blocked' ? (
         <section
           role="alert"
-          className="flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
+          className="flex flex-col items-center gap-4 rounded-card bg-surface p-8 text-center shadow-card"
         >
-          <h2 className="text-lg font-semibold text-slate-900">
+          <IconTile tone="rose" shape="circle" className="h-14 w-14">
+            <BagIcon className="h-7 w-7" />
+          </IconTile>
+          <h2 className="text-lg font-semibold text-ink">
             No podés confirmar el pago
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             Tu carrito está vacío. Agregá al menos un producto antes de pagar.
           </p>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            fullWidth={false}
+            icon={<StoreIcon className="h-4 w-4" />}
             onClick={() => navigate('/catalog')}
-            className="self-start rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
           >
             Ir al catálogo
-          </button>
+          </Button>
         </section>
       ) : (
         <>
-          <div className="flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
-            <span className="text-sm font-medium text-slate-600">Total</span>
-            <span className="text-lg font-bold text-slate-900">
+          <div className="flex items-center justify-between rounded-card bg-surface px-5 py-4 shadow-card">
+            <span className="text-sm font-medium text-muted">Total</span>
+            <span className="text-xl font-bold text-ink">
               {formatPrice(cartTotal(state.cart), 'PEN')}
             </span>
           </div>
 
-          <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-sm font-medium text-slate-500">
+          <fieldset className="flex flex-col gap-3">
+            <legend className="mb-1 text-sm font-medium text-muted">
               Método de pago (simulado)
             </legend>
             {paymentMethods.map((method) => (
               <label
                 key={method}
-                className="flex cursor-pointer items-center gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-400"
+                className={cn(
+                  'flex cursor-pointer items-center gap-3 rounded-card bg-surface p-4 shadow-card ring-2 transition-all duration-200 ease-out',
+                  selectedMethod === method
+                    ? 'ring-primary'
+                    : 'ring-transparent hover:ring-primary/20',
+                )}
               >
                 <input
                   type="radio"
@@ -110,33 +130,31 @@ export function CheckoutPage() {
                   value={method}
                   checked={selectedMethod === method}
                   onChange={() => send({ type: 'select', method })}
-                  className="h-4 w-4"
+                  className="h-4 w-4 accent-primary"
                 />
-                <span className="text-sm font-medium text-slate-900">
+                <PaymentBrand method={method} />
+                <span className="text-sm font-medium text-ink">
                   {paymentMethodLabels[method]}
                 </span>
               </label>
             ))}
           </fieldset>
 
-          <button
-            type="button"
-            disabled={selectedMethod === null}
-            onClick={handleConfirm}
-            className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
-          >
+          <Button disabled={selectedMethod === null} onClick={handleConfirm}>
             Confirmar pedido
-          </button>
+          </Button>
         </>
       )}
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => navigate('/cart')}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Volver al carrito
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }

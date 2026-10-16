@@ -3,6 +3,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { Button } from '../../components/ui/Button'
+import { BagIcon } from '../../components/ui/icons'
+import { IconTile } from '../../components/ui/IconTile'
+import { Pill } from '../../components/ui/Pill'
+import { Screen } from '../../components/ui/Screen'
 import { formatExpiry, formatPrice } from '../../lib/format'
 import { ordersNewestFirst } from '../../lib/history'
 import { paymentMethodLabels } from '../../lib/payment'
@@ -30,43 +35,50 @@ export function HistoryPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
+    <Screen>
       <header className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-slate-500">Mis compras</p>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <p className="text-sm font-medium text-primary">Mis compras</p>
+        <h1 className="text-[26px] font-extrabold tracking-tight text-ink">
           Historial
         </h1>
       </header>
 
       {orders.length === 0 ? (
-        <p className="text-sm text-slate-600">
-          Todavía no tenés compras. Cuando confirmes un pedido vas a poder verlo
-          acá.
-        </p>
+        <div className="flex flex-col items-center gap-4 rounded-card bg-surface p-8 text-center shadow-card">
+          <IconTile tone="lilac" shape="circle" className="h-14 w-14">
+            <BagIcon className="h-7 w-7" />
+          </IconTile>
+          <p className="text-sm text-muted">
+            Todavía no tenés compras. Cuando confirmes un pedido vas a poder
+            verlo acá.
+          </p>
+        </div>
       ) : (
         <ul className="flex flex-col gap-3">
           {orders.map((order) => (
             <li
               key={order.id}
-              className="flex items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200"
+              className="flex items-center justify-between gap-3 rounded-card bg-surface p-4 shadow-card"
             >
-              <div className="flex min-w-0 flex-col gap-1">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <span
                   data-testid="history-order-id"
-                  className="truncate font-mono text-sm font-semibold text-slate-900"
+                  className="truncate font-mono text-sm font-semibold text-ink"
                 >
                   {order.id}
                 </span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-subtle">
                   {formatExpiry(order.createdAt.slice(0, 10))}
                 </span>
-                <span className="text-sm text-slate-700">
-                  {formatPrice(order.total, 'PEN')} ·{' '}
-                  {paymentMethodLabels[order.paymentMethod]}
+                <span className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-primary">
+                    {formatPrice(order.total, 'PEN')}
+                  </span>
+                  <Pill>{paymentMethodLabels[order.paymentMethod]}</Pill>
                 </span>
                 <Link
                   to={`/receipt/${order.id}`}
-                  className="text-sm font-medium text-slate-900 underline"
+                  className="text-sm font-medium text-ink underline underline-offset-4"
                 >
                   Ver comprobante
                 </Link>
@@ -77,48 +89,54 @@ export function HistoryPage() {
         </ul>
       )}
 
-      <section className="no-print flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+      <section className="no-print flex flex-col gap-3 rounded-card bg-surface p-4 shadow-card">
         {confirmingReset ? (
           <div role="alert" className="flex flex-col gap-3">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-muted">
               ¿Borrar todos los datos de demo? Se van a eliminar tus compras, tu
               cuenta y tu carrito. Esta acción no se puede deshacer.
             </p>
-            <div className="flex gap-3">
-              <button
-                type="button"
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="danger"
+                size="sm"
+                fullWidth={false}
                 onClick={handleReset}
-                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500"
               >
                 Sí, borrar todo
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                fullWidth={false}
                 onClick={() => setConfirmingReset(false)}
-                className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
               >
                 Cancelar
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
+            fullWidth={false}
+            className="self-start"
             onClick={() => setConfirmingReset(true)}
-            className="self-start text-sm font-medium text-red-600 underline"
           >
             Borrar datos de demo
-          </button>
+          </Button>
         )}
       </section>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
+        fullWidth={false}
+        className="mt-auto self-start"
         onClick={() => navigate('/catalog')}
-        className="mt-auto self-start text-sm font-medium text-slate-500 underline"
       >
         Volver al catálogo
-      </button>
-    </main>
+      </Button>
+    </Screen>
   )
 }
