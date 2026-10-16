@@ -9,6 +9,13 @@ history.
 Everything runs in the browser. There is no backend, no database, and no real
 payment provider. Mock data lives in `localStorage`.
 
+## Live demo
+
+<https://andreschoqque2019.github.io/smart-shopint/>
+
+Served from the `gh-pages` branch, which holds the built output. Open it on a
+phone: the layout is a single mobile column.
+
 ## Requirements
 
 - Node.js 24 or newer
