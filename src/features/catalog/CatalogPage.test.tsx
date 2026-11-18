@@ -1,7 +1,8 @@
 import { cleanup, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { Product } from '../../data/types'
+import type { CartLine, Product } from '../../data/types'
 import { StorageKeys } from '../../lib/storage'
 import { renderApp } from '../../test/renderApp'
 
@@ -153,14 +154,34 @@ describe('CatalogPage', () => {
     seedSelection(TOTTUS)
     renderApp(['/catalog'])
 
-    expect(await screen.findByText('S/ 4.90')).toBeInTheDocument()
+    // The same amount appears in the aisle row and as the promo card's old price.
+    expect((await screen.findAllByText('S/ 4.90')).length).toBeGreaterThan(0)
 
     cleanup()
     seedSelection(PLAZA_VEA, MALL_JOCKEY)
     renderApp(['/catalog'])
 
-    expect(await screen.findByText('S/ 4.70')).toBeInTheDocument()
-    expect(screen.queryByText('S/ 4.90')).toBeNull()
+    expect((await screen.findAllByText('S/ 4.70')).length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('S/ 4.90')).toHaveLength(0)
+  })
+
+  it('adds a promoted product at its discounted unit price', async () => {
+    const user = userEvent.setup()
+    seedSelection(TOTTUS)
+    renderApp(['/catalog'])
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Agregar Leche Gloria Entera 400g en promoción',
+      }),
+    )
+
+    const cart = JSON.parse(
+      window.localStorage.getItem(StorageKeys.cart) ?? '[]',
+    ) as CartLine[]
+    expect(cart).toEqual([
+      { sku: 'SKU-0001', storeId: 'md-tottus', qty: 1, unitPrice: 3.92 },
+    ])
   })
 
   it('explains that a store without catalog has no products', async () => {

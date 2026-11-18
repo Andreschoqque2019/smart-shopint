@@ -9,10 +9,13 @@ import { Pill } from '../../components/ui/Pill'
 import { Screen } from '../../components/ui/Screen'
 import { SectionTitle } from '../../components/ui/SectionTitle'
 import { products } from '../../data/catalog'
+import { promotions } from '../../data/promotions'
 import type { Product } from '../../data/types'
 import { groupProductsByAisle } from '../../lib/aisles'
 import { cartCount } from '../../lib/cart'
 import { formatExpiry, formatPrice } from '../../lib/format'
+import { recommendedPromotions } from '../../lib/recommendations'
+import { PromotionsSection } from './PromotionsSection'
 
 /**
  * Product catalog for the selected store.
@@ -38,14 +41,23 @@ export function CatalogPage() {
   // aisle with no products for this store simply does not show up.
   const aisleGroups = groupProductsByAisle(storeProducts)
 
-  function handleAdd(product: Product) {
+  const promoItems = recommendedPromotions(
+    products,
+    promotions,
+    state.orders,
+    state.cart,
+    store?.id ?? '',
+    3,
+  )
+
+  function handleAdd(product: Product, unitPrice = product.price) {
     dispatch({
       type: 'cart/add',
       line: {
         sku: product.sku,
         storeId: product.storeId,
         qty: 1,
-        unitPrice: product.price,
+        unitPrice,
       },
     })
   }
@@ -126,6 +138,11 @@ export function CatalogPage() {
               ))}
             </ul>
           </section>
+
+          <PromotionsSection
+            items={promoItems}
+            onAdd={(item) => handleAdd(item.product, item.price)}
+          />
 
           <Button
             variant="secondary"
