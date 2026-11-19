@@ -24,7 +24,7 @@ The catalog has no discovery surface beyond aisles, and purchase history is stor
 - Keep the existing Pages URL and the `gh-pages` source; do not change repository settings.
 - Do not touch the untracked root files `vscode-setup-agent.md` or `vscode-setup-manual.md`.
 - No SDD artifacts or native review; organic direct route with one delegated writer.
-- TDD mode: off (no project or session config found). Ordinary functional checks apply.
+- TDD mode: off (no project or session config found). This price-merge fix used ordinary functional checks, not a red/green cycle.
 
 ## Route evidence
 
@@ -39,6 +39,7 @@ The catalog has no discovery surface beyond aisles, and purchase history is stor
 - [x] P3 Add `PromotionsSection` UI and wire it into `CatalogPage` with a component test
 - [x] P4 Add the GitHub Actions deploy workflow and verify the command sequence locally
 - [x] P5 Run the full check suite and commit as reviewable work units
+- [x] P6 Keep the lower unit price when merging a promoted line into an existing `(sku, storeId)` line
 
 ## Acceptance criteria
 
@@ -64,6 +65,7 @@ The catalog has no discovery surface beyond aisles, and purchase history is stor
 - Verified in the parent: `npm test` 26 files / 153 tests passed; `npm run lint` exit 0; `npx tsc --noEmit` exit 0; `npm run build -- --base=/smart-shopint/` succeeded with `/smart-shopint/assets/...` paths in `dist/index.html`.
 - The Actions workflow itself cannot run locally; its exact command sequence was verified instead.
 - Work units: `feat(catalog)` for the promotions feature; `ci` for the deploy workflow.
+- Fixed the promoted-line price merge: `addLine` kept the existing `unitPrice` when another unit of the same (`sku`, `storeId`) arrived, so full-price-then-promoted charged the full price and promoted-then-full-price discounted every unit. Chose `Math.min(existing, incoming)` so the lower price wins regardless of add order, the merge is commutative, and `addLine` stays unaware of promotions; money remains integer cents. Verified with `npm test -- src/lib/cart.test.ts` (1 file / 16 tests passed), `npm test` (26 files / 156 tests passed), `npm run lint` (exit 0), `npx tsc --noEmit` (exit 0). Work unit: `fix(cart): keep discounted unit price when merging promoted lines` (hash: COMMIT_HASH_PENDING).
 
 ## Next step
 

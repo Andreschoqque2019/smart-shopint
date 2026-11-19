@@ -72,6 +72,42 @@ describe('addLine', () => {
 
     expect(result).toHaveLength(2)
   })
+
+  it('uses the discounted price when the promoted unit is added second', () => {
+    const result = addLine(
+      [line({ qty: 1, unitPrice: 4.9 })],
+      line({ qty: 1, unitPrice: 3.92 }),
+    )
+
+    expect(result).toHaveLength(1)
+    expect(result[0].qty).toBe(2)
+    expect(result[0].unitPrice).toBe(3.92)
+    expect(cartTotal(result)).toBe(7.84)
+  })
+
+  it('uses the discounted price when the full-price unit is added second', () => {
+    const result = addLine(
+      [line({ qty: 1, unitPrice: 3.92 })],
+      line({ qty: 1, unitPrice: 4.9 }),
+    )
+
+    expect(result).toHaveLength(1)
+    expect(result[0].qty).toBe(2)
+    expect(result[0].unitPrice).toBe(3.92)
+    expect(cartTotal(result)).toBe(7.84)
+  })
+
+  it('leaves the price unchanged when both adds use the same price', () => {
+    const result = addLine(
+      [line({ qty: 1, unitPrice: 3.92 })],
+      line({ qty: 1, unitPrice: 3.92 }),
+    )
+
+    expect(result).toHaveLength(1)
+    expect(result[0].qty).toBe(2)
+    expect(result[0].unitPrice).toBe(3.92)
+    expect(cartTotal(result)).toBe(7.84)
+  })
 })
 
 describe('decrementLine', () => {

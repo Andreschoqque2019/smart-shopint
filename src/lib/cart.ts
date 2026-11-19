@@ -54,7 +54,10 @@ export function cartCount(lines: CartLine[]): number {
  * Adds a line to the cart.
  *
  * Adding a (`sku`, `storeId`) that is already present increments its quantity
- * instead of appending a duplicate line.
+ * instead of appending a duplicate line. The lower unit price wins so a
+ * promotion applies whichever add path produced the line (aisle or promotions).
+ * Using `Math.min` keeps the merge commutative without `addLine` knowing
+ * anything about promotions.
  */
 export function addLine(lines: CartLine[], line: CartLine): CartLine[] {
   const index = lines.findIndex((item) =>
@@ -64,7 +67,13 @@ export function addLine(lines: CartLine[], line: CartLine): CartLine[] {
     return [...lines, { ...line }]
   }
   return lines.map((item, position) =>
-    position === index ? { ...item, qty: item.qty + line.qty } : item,
+    position === index
+      ? {
+          ...item,
+          qty: item.qty + line.qty,
+          unitPrice: Math.min(item.unitPrice, line.unitPrice),
+        }
+      : item,
   )
 }
 
