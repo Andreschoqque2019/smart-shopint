@@ -6,7 +6,6 @@ import { ProductImage } from '../../components/brand/ProductImage'
 import { Button } from '../../components/ui/Button'
 import { CartIcon, ReceiptIcon, ScanIcon, StoreIcon } from '../../components/ui/icons'
 import { IconTile } from '../../components/ui/IconTile'
-import { Pill } from '../../components/ui/Pill'
 import { Screen } from '../../components/ui/Screen'
 import { SectionTitle } from '../../components/ui/SectionTitle'
 import { products } from '../../data/catalog'
@@ -22,11 +21,10 @@ import { PromotionsSection } from './PromotionsSection'
  * Product catalog for the selected store.
  *
  * Lists every product the chosen store sells, grouped by aisle, and exposes
- * the sku, name, price and expiry date of each row. A summary at the top tells
- * the shopper what each aisle of this store actually holds. Every row can be
- * added to the cart, and the header exposes the cart with its item count.
- * A store with no products falls back to an explicit message; every seeded
- * store has a catalog, so that branch stays as a defensive guard.
+ * the sku, name, price and expiry date of each row. Every row can be added to
+ * the cart, and the header exposes the cart with its item count. A store with
+ * no products falls back to an explicit message; every seeded store has a
+ * catalog, so that branch stays as a defensive guard.
  */
 export function CatalogPage() {
   const { state, dispatch } = useAppStore()
@@ -117,31 +115,6 @@ export function CatalogPage() {
         </div>
       ) : (
         <>
-          <section
-            aria-label="Pasillos de esta tienda"
-            className="flex flex-col gap-3"
-          >
-            <SectionTitle>Pasillos de esta tienda</SectionTitle>
-            <ul className="flex flex-col gap-3">
-              {aisleGroups.map(({ aisle, items }) => (
-                <li
-                  key={aisle.id}
-                  className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card"
-                >
-                  <Pill className="shrink-0">Pasillo {aisle.number}</Pill>
-                  <span className="flex min-w-0 flex-col gap-0.5">
-                    <span className="text-sm font-semibold text-ink">
-                      {aisle.name}
-                    </span>
-                    <span className="truncate text-xs text-subtle">
-                      {items.map((item) => item.name).join(' · ')}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
           <PromotionsSection
             items={promoItems}
             onAdd={(item) => handleAdd(item.product, item.price)}

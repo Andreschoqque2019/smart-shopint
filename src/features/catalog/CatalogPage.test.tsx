@@ -125,21 +125,6 @@ describe('CatalogPage', () => {
     ).toBeInTheDocument()
   })
 
-  it('summarizes what each aisle of this store holds', async () => {
-    seedSelection(TOTTUS)
-
-    renderApp(['/catalog'])
-
-    expect(
-      await screen.findByRole('heading', {
-        level: 2,
-        name: 'Pasillos de esta tienda',
-      }),
-    ).toBeInTheDocument()
-    expect(screen.getByText('Pasillo 2')).toBeInTheDocument()
-    expect(screen.getByText('Lácteos y huevos')).toBeInTheDocument()
-  })
-
   it('exposes the sku, name and expiry of each product', async () => {
     seedSelection(TOTTUS)
 
