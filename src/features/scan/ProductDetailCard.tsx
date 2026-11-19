@@ -3,6 +3,7 @@ import { Button } from '../../components/ui/Button'
 import { CartIcon } from '../../components/ui/icons'
 import { Pill } from '../../components/ui/Pill'
 import { useAppStore } from '../../app/store'
+import { useToast } from '../../app/toastContext'
 import { categories } from '../../data/catalog'
 import type { Product } from '../../data/types'
 import { resolveAisle } from '../../lib/aisles'
@@ -21,6 +22,7 @@ interface ProductDetailCardProps {
  */
 export function ProductDetailCard({ product }: ProductDetailCardProps) {
   const { dispatch } = useAppStore()
+  const { showToast } = useToast()
   const category = categories.find((item) => item.id === product.categoryId)
   const aisle = resolveAisle(product.categoryId)
 
@@ -34,6 +36,7 @@ export function ProductDetailCard({ product }: ProductDetailCardProps) {
         unitPrice: product.price,
       },
     })
+    showToast(product.name)
   }
 
   return (

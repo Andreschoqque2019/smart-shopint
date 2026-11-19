@@ -11,6 +11,7 @@ import {
   type AppState,
 } from './appState'
 import { AppStoreContext } from './store'
+import { ToastProvider } from './toast'
 
 interface AppProviderProps {
   children: ReactNode
@@ -53,7 +54,7 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 
   return (
     <AppStoreContext.Provider value={value}>
-      {children}
+      <ToastProvider>{children}</ToastProvider>
     </AppStoreContext.Provider>
   )
 }

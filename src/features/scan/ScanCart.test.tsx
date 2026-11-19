@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 
@@ -58,6 +58,39 @@ describe('adding a scanned product to the cart', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Tu carrito' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('Leche Gloria Entera 400g')).toBeInTheDocument()
+    // Scope to the cart: the global toast briefly still shows the same name.
+    expect(
+      within(screen.getByRole('region', { name: 'Carrito' })).getByText(
+        'Leche Gloria Entera 400g',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('confirms a scanned add with a toast that stays out of storage', async () => {
+    const user = userEvent.setup()
+
+    renderApp(['/scan'])
+
+    await user.selectOptions(
+      await screen.findByLabelText('Producto'),
+      'SKU-0001',
+    )
+    await user.click(
+      await screen.findByRole('button', { name: 'Agregar al carrito' }),
+    )
+
+    // The scan screen already has a camera status banner, so pick the one that
+    // carries the cart confirmation.
+    const toast = (await screen.findAllByRole('status')).find((node) =>
+      node.textContent?.includes('Agregado al carrito'),
+    )
+    expect(toast).toBeDefined()
+    expect(toast).toHaveTextContent('Leche Gloria Entera 400g')
+
+    const storageKeys = Array.from(
+      { length: window.localStorage.length },
+      (_, index) => window.localStorage.key(index),
+    )
+    expect(storageKeys.some((key) => key?.includes('toast'))).toBe(false)
   })
 })

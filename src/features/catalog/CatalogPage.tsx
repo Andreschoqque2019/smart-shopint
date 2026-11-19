@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppStore } from '../../app/store'
+import { useToast } from '../../app/toastContext'
 import { ProductImage } from '../../components/brand/ProductImage'
 import { Button } from '../../components/ui/Button'
 import { CartIcon, ReceiptIcon, ScanIcon, StoreIcon } from '../../components/ui/icons'
@@ -9,7 +9,6 @@ import { IconTile } from '../../components/ui/IconTile'
 import { Pill } from '../../components/ui/Pill'
 import { Screen } from '../../components/ui/Screen'
 import { SectionTitle } from '../../components/ui/SectionTitle'
-import { Toast } from '../../components/ui/Toast'
 import { products } from '../../data/catalog'
 import { promotions } from '../../data/promotions'
 import type { Product } from '../../data/types'
@@ -31,17 +30,8 @@ import { PromotionsSection } from './PromotionsSection'
  */
 export function CatalogPage() {
   const { state, dispatch } = useAppStore()
+  const { showToast } = useToast()
   const navigate = useNavigate()
-
-  // Ephemeral UI only: the confirmation must never reach the persisted store.
-  // The sequence restarts the timer even when the same product is added twice.
-  const [toast, setToast] = useState<{ message: string; seq: number } | null>(null)
-
-  useEffect(() => {
-    if (!toast) return
-    const timer = window.setTimeout(() => setToast(null), 2500)
-    return () => window.clearTimeout(timer)
-  }, [toast])
 
   const store = state.selectedStore
   const mall = state.selectedMall
@@ -72,10 +62,7 @@ export function CatalogPage() {
         unitPrice,
       },
     })
-    setToast((current) => ({
-      message: product.name,
-      seq: (current?.seq ?? 0) + 1,
-    }))
+    showToast(product.name)
   }
 
   return (
@@ -221,8 +208,6 @@ export function CatalogPage() {
       >
         Cambiar tienda
       </Button>
-
-      {toast && <Toast message={toast.message} />}
     </Screen>
   )
 }
