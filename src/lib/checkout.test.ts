@@ -32,11 +32,11 @@ describe('checkoutReducer', () => {
   })
 
   it('completes at done, keeping the chosen method and the order id', () => {
-    const confirming: CheckoutState = { status: 'confirming', method: 'cash' }
+    const confirming: CheckoutState = { status: 'confirming', method: 'debit' }
 
     expect(
       checkoutReducer(confirming, { type: 'complete', orderId: 'ord-1' }),
-    ).toEqual({ status: 'done', method: 'cash', orderId: 'ord-1' })
+    ).toEqual({ status: 'done', method: 'debit', orderId: 'ord-1' })
   })
 
   it('ignores events that do not apply to the current state', () => {

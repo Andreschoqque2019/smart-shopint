@@ -83,6 +83,27 @@ describe('loadInitialState', () => {
     expect(state.cart).toEqual([])
     expect(state.orders).toEqual([])
   })
+
+  it('loads a legacy cash order as debit without rewriting storage', () => {
+    const legacyOrder = {
+      id: 'ord-legacy',
+      lines: [LINE],
+      total: 4.9,
+      paymentMethod: 'cash',
+      createdAt: '2026-01-01T00:00:00.000Z',
+    }
+    window.localStorage.setItem(
+      StorageKeys.orders,
+      JSON.stringify([legacyOrder]),
+    )
+
+    const state = loadInitialState()
+
+    expect(state.orders).toEqual([{ ...legacyOrder, paymentMethod: 'debit' }])
+    expect(JSON.parse(window.localStorage.getItem(StorageKeys.orders) ?? '[]')).toEqual(
+      [legacyOrder],
+    )
+  })
 })
 
 describe('cart actions', () => {

@@ -37,7 +37,7 @@ function order(id: string, lines: CartLine[]): Order {
     id,
     lines,
     total: 10,
-    paymentMethod: 'cash',
+    paymentMethod: 'debit',
     createdAt: '2026-01-01T00:00:00.000Z',
   }
 }

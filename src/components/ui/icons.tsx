@@ -175,12 +175,12 @@ export function BagIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
-/** Banknote, for the cash payment brand. */
-export function CashIcon(props: SVGProps<SVGSVGElement>) {
+/** Debit card, for the debit payment brand. */
+export function CardIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <Icon {...props}>
-      <rect x="2" y="6" width="20" height="12" rx="2" />
-      <circle cx="12" cy="12" r="3" />
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
     </Icon>
   )
 }

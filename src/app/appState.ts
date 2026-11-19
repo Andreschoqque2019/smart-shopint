@@ -140,6 +140,22 @@ export function emptyAppState(): AppState {
   }
 }
 
+/**
+ * Normalizes legacy orders saved before `cash` was renamed to `debit`.
+ *
+ * The guard only checks that `paymentMethod` is a string, so an old `cash`
+ * order passes validation but would render an undefined label. The transform
+ * is local and pure: stored data is left untouched, so user history survives
+ * and the loader never throws.
+ */
+function withMigratedPaymentMethods(orders: Order[]): Order[] {
+  return orders.map((order) =>
+    (order.paymentMethod as string) === 'cash'
+      ? { ...order, paymentMethod: 'debit' }
+      : order,
+  )
+}
+
 /** Reads the persisted app state, falling back to empty slices. */
 export function loadInitialState(): AppState {
   const auth = readAuthRecord()
@@ -150,7 +166,9 @@ export function loadInitialState(): AppState {
     selectedMall: readJSON<Mall | null>(StorageKeys.mall, null, isMall),
     selectedStore: readJSON<Store | null>(StorageKeys.store, null, isStore),
     cart: readJSON<Cart>(StorageKeys.cart, [], isCart),
-    orders: readJSON<Order[]>(StorageKeys.orders, [], isOrders),
+    orders: withMigratedPaymentMethods(
+      readJSON<Order[]>(StorageKeys.orders, [], isOrders),
+    ),
   }
 }
 

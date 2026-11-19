@@ -6,11 +6,11 @@ import type { PaymentMethod } from '../data/types'
  * These are the methods a Peruvian shopper would recognise, but the app never
  * calls a payment provider: the checkout is a local simulation only.
  */
-export const paymentMethods: PaymentMethod[] = ['yape', 'plin', 'cash']
+export const paymentMethods: PaymentMethod[] = ['yape', 'plin', 'debit']
 
 /** Spanish labels shown on the checkout screen, per simulated method. */
 export const paymentMethodLabels: Record<PaymentMethod, string> = {
   yape: 'Yape',
   plin: 'Plin',
-  cash: 'Efectivo',
+  debit: 'Tarjeta de débito',
 }

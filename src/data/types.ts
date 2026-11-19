@@ -12,7 +12,7 @@ export type Sku = string
 export type Currency = 'PEN'
 
 /** Simulated checkout payment method. Never charged over the network. */
-export type PaymentMethod = 'yape' | 'plin' | 'cash'
+export type PaymentMethod = 'yape' | 'plin' | 'debit'
 
 /** A shopping mall (level 1 of the selection flow). */
 export interface Mall {

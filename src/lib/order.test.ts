@@ -37,6 +37,6 @@ describe('buildOrder', () => {
   })
 
   it('gives two consecutive orders distinct ids', () => {
-    expect(buildOrder(LINES, 'yape').id).not.toBe(buildOrder(LINES, 'cash').id)
+    expect(buildOrder(LINES, 'yape').id).not.toBe(buildOrder(LINES, 'debit').id)
   })
 })

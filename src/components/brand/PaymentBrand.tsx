@@ -1,26 +1,26 @@
 import type { PaymentMethod } from '../../data/types'
 import { cn } from '../ui/cn'
-import { BoltIcon, CashIcon } from '../ui/icons'
+import { BoltIcon, CardIcon } from '../ui/icons'
 
 interface PaymentSpec {
   initials: string
   bg: string
-  /** Cash uses a banknote glyph instead of a monogram. */
-  glyph?: 'monogram' | 'cash'
+  /** Debit uses a card glyph instead of a monogram. */
+  glyph?: 'monogram' | 'card'
 }
 
 /**
  * Own payment marks.
  *
  * Original tiles that evoke each simulated method — not the real brands. Yape
- * and Plin keep a monogram plus a bolt; cash shows a banknote. Theme tokens
+ * and Plin keep a monogram plus a bolt; debit shows a card. Theme tokens
  * only, and the whole tile is decorative (the label next to it names the
  * method), so it never pollutes the radio's accessible name.
  */
 const PAYMENTS: Record<PaymentMethod, PaymentSpec> = {
   yape: { initials: 'Y', bg: 'bg-accent-purple' },
   plin: { initials: 'P', bg: 'bg-accent-blue' },
-  cash: { initials: '', bg: 'bg-accent-green', glyph: 'cash' },
+  debit: { initials: '', bg: 'bg-accent-green', glyph: 'card' },
 }
 
 interface PaymentBrandProps {
@@ -30,7 +30,7 @@ interface PaymentBrandProps {
 
 export function PaymentBrand({ method, className }: PaymentBrandProps) {
   const spec = PAYMENTS[method]
-  const isCash = spec.glyph === 'cash'
+  const isCard = spec.glyph === 'card'
 
   return (
     <span
@@ -41,8 +41,8 @@ export function PaymentBrand({ method, className }: PaymentBrandProps) {
         className,
       )}
     >
-      {isCash ? (
-        <CashIcon className="h-6 w-6" />
+      {isCard ? (
+        <CardIcon className="h-6 w-6" />
       ) : (
         <>
           <span className="relative z-10 text-sm font-extrabold tracking-tight">
