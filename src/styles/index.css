@@ -60,6 +60,20 @@
   --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
   --shadow-card-hover: 0 10px 26px rgba(0, 0, 0, 0.1);
   --shadow-frame: 0 0 60px rgba(0, 0, 0, 0.06);
+
+  /* Transient cart-add toast: a short slide up and fade. */
+  --animate-toast-in: toast-in 200ms ease-out;
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @layer base {

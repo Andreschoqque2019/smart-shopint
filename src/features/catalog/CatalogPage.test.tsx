@@ -1,4 +1,4 @@
-import { cleanup, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -182,6 +182,69 @@ describe('CatalogPage', () => {
     expect(cart).toEqual([
       { sku: 'SKU-0001', storeId: 'md-tottus', qty: 1, unitPrice: 3.92 },
     ])
+  })
+
+  it('does not show a confirmation toast before any add', async () => {
+    seedSelection(TOTTUS)
+    renderApp(['/catalog'])
+
+    await screen.findByRole('heading', { level: 1, name: 'Catálogo' })
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.queryByText('Agregado al carrito')).not.toBeInTheDocument()
+  })
+
+  it('confirms an aisle add with the product name', async () => {
+    const user = userEvent.setup()
+    seedSelection(TOTTUS)
+    renderApp(['/catalog'])
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Agregar Leche Gloria Entera 400g',
+      }),
+    )
+
+    const toast = await screen.findByRole('status')
+    expect(toast).toHaveTextContent('Agregado al carrito')
+    expect(toast).toHaveTextContent('Leche Gloria Entera 400g')
+  })
+
+  it('confirms a promotion add with the product name', async () => {
+    const user = userEvent.setup()
+    seedSelection(TOTTUS)
+    renderApp(['/catalog'])
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Agregar Leche Gloria Entera 400g en promoción',
+      }),
+    )
+
+    const toast = await screen.findByRole('status')
+    expect(toast).toHaveTextContent('Agregado al carrito')
+    expect(toast).toHaveTextContent('Leche Gloria Entera 400g')
+  })
+
+  it('dismisses the toast after about 2.5 seconds', () => {
+    vi.useFakeTimers()
+    try {
+      seedSelection(TOTTUS)
+      renderApp(['/catalog'])
+
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Agregar Leche Gloria Entera 400g' }),
+      )
+      expect(screen.getByRole('status')).toBeInTheDocument()
+
+      act(() => {
+        vi.advanceTimersByTime(2500)
+      })
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('explains that a store without catalog has no products', async () => {
