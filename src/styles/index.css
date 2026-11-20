@@ -19,9 +19,13 @@
   --font-sans:
     'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* Action red: the one and only action colour (logo, CTAs, icons, numbers). */
+  /* Accent red: headings, prices, pills, focus rings and the danger action. */
   --color-primary: #e8112d;
   --color-primary-strong: #e53935;
+
+  /* Light-green brand: primary actions and the logo. */
+  --color-brand: #4caf50;
+  --color-brand-strong: #388e3c;
 
   /* Text */
   --color-ink: #1a1a1a;

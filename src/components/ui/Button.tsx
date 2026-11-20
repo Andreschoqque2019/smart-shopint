@@ -6,7 +6,7 @@ type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 type ButtonSize = 'md' | 'sm'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Visual style. `primary` is the red action button and the default. */
+  /** Visual style. `primary` is the light-green action button and the default. */
   variant?: ButtonVariant
   size?: ButtonSize
   /** CTAs fill the card they live in; inline actions opt out. */
@@ -20,7 +20,7 @@ const base =
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-white shadow-card hover:-translate-y-0.5 hover:bg-primary-strong hover:shadow-card-hover active:translate-y-0',
+    'bg-brand text-white shadow-card hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-card-hover active:translate-y-0 focus-visible:ring-brand/40!',
   secondary: 'bg-soft text-ink hover:-translate-y-0.5 hover:bg-line active:translate-y-0',
   ghost:
     'bg-transparent px-0 text-muted underline underline-offset-4 hover:text-ink hover:no-underline',
@@ -36,8 +36,8 @@ const sizes: Record<ButtonSize, string> = {
 /**
  * Action button.
  *
- * The app has a single action colour (red, `bg-primary`); every variant is
- * expressed with theme tokens so the palette lives in one place.
+ * The default `primary` variant uses the light-green brand colour; red stays
+ * the accent and danger colour. Every variant uses theme tokens.
  */
 export function Button({
   variant = 'primary',
